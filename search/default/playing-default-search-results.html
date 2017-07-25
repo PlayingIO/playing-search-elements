@@ -1,0 +1,111 @@
+<!--
+`playing-default-search-results`
+@group Playing UI
+@element playing-default-search-results
+-->
+<dom-module id="playing-default-search-results">
+  <template>
+
+    <mostly-results name="default" nx-provider="[[nxProvider]]" selected-items="{{selectedItems}}">
+
+      <mostly-data-grid name="grid" icon="nuxeo:view-thumbnails" class="results" empty-label="[[i18n('searchResults.noResults')]]" selection-enabled display-quick-filters>
+        <template>
+          <playing-document-grid-thumbnail
+                  tabindex$="{{tabIndex}}"
+                  selected$="{{selected}}"
+                  doc="[[item]]"
+                  on-navigate="_navigate"
+                  selected-items="[[selectedItems]]">
+          </playing-document-grid-thumbnail>
+        </template>
+      </mostly-data-grid>
+
+      <mostly-data-table name="table" icon="nuxeo:view-list" class="results"
+              settings-enabled
+              empty-label="[[i18n('searchResults.noResults')]]"
+              selection-enabled
+              display-quick-filters
+              on-row-clicked="_navigate">
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.title')]]" field="dc:title" sort-by="dc:title" flex="100">
+          <template>
+            <playing-document-thumbnail document="[[item]]"></playing-document-thumbnail>
+            <a class="ellipsis" href$="[[urlFor('browse', item.path)]]" on-tap="_navigate">[[item.title]]</a>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.modified')]]" field="dc:modified" sort-by="dc:modified" flex="50">
+          <template>
+            <nuxeo-date datetime="[[item.properties.dc:modified]]"></nuxeo-date>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.lastContributor')]]" field="dc:lastContributor" sort-by="dc:lastContributor" flex="50">
+          <template>
+            <playing-user-tag user="[[item.properties.dc:lastContributor]]"></playing-user-tag>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.state')]]" field="currentLifeCycleState" hidden>
+          <template>
+            <span class="capitalize">[[item.state]]</span>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.version')]]" field="versionLabel" hidden>
+          <template>
+            [[formatVersion(item)]]
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.created')]]" field="dc:created" sort-by="dc:created" flex="50" hidden>
+          <template>
+            <nuxeo-date datetime="[[item.properties.dc:created]]"></nuxeo-date>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.author')]]" field="dc:creator" sort-by="dc:creator" hidden>
+          <template>
+            <playing-user-tag user="[[item.properties.dc:creator]]"></playing-user-tag>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.nature')]]" field="dc:nature" hidden>
+          <template>
+            <mostly-tag hidden$="[[!item.properties.dc:nature]]">[[formatDirectory(item.properties.dc:nature)]]</mostly-tag>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.coverage')]]" field="dc:coverage" hidden>
+          <template>
+            <mostly-tag hidden$="[[!item.properties.dc:coverage]]">[[formatDirectory(item.properties.dc:coverage)]]</mostly-tag>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.subjects')]]" field="dc:subjects" hidden flex="60">
+          <template>
+            <template is="dom-repeat" items="[[item.properties.dc:subjects]]" as="subject">
+              <mostly-tag>[[formatDirectory(subject)]]</mostly-tag>
+            </template>
+          </template>
+        </mostly-data-table-column>
+
+      </mostly-data-table>
+    </mostly-results>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-default-search-results',
+      behaviors: [Mostly.LayoutBehavior],
+      properties: {
+        nxProvider: Object
+      },
+
+      _navigate: function(e) {
+        this.fire('navigate', {doc: (e.model || e.detail).item});
+      }
+    });
+  </script>
+
+</dom-module>

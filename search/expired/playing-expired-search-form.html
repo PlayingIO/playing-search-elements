@@ -1,0 +1,72 @@
+<!--
+`playing-expired-search-form`
+@group Playing UI
+@element playing-expired-search-form
+-->
+<dom-module id="playing-expired-search-form">
+  <template>
+
+    <nuxeo-input role="widget"
+            id="searchInput"
+            label="[[i18n('defaultSearch.fullText')]]"
+            value="{{searchTerm}}"
+            placeholder="[[i18n('defaultSearch.fullText.placeholder')]]"
+            autofocus>
+    </nuxeo-input>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.authors')]]</label>
+      <mostly-dropdown-aggregation placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
+              data="[[aggregations.dc_creator_agg]]"
+              value="{{params.dc_creator_agg}}"
+              multiple="true">
+      </mostly-dropdown-aggregation>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-expired-search-form',
+      behaviors: [Mostly.I18nBehavior],
+      properties: {
+        params: {
+          type: Object,
+          value: function() {
+            var oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            return {
+              "expired_max" : oneWeekAgo.toJSON()
+            }
+          },
+          notify: true
+        },
+        aggregations: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+        searchTerm: {
+          type: String,
+          notify: true,
+          observer: '_addFullTextSearch'
+        }
+      },
+
+      _addFullTextSearch: function() {
+        if (this.searchTerm) {
+          this.set('params.title', this.searchTerm + '*');
+        } else {
+          if (this.params.ecm_fulltext) {
+            this.set('params.title', '');
+            delete this.params.title;
+          }
+        }
+      },
+
+      clear: function() {
+        this.searchTerm = '';
+      }
+    });
+  </script>
+</dom-module>

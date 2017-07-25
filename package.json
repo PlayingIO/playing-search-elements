@@ -1,6 +1,6 @@
 {
-  "name": "playing-social-elements",
-  "description": "Social relationship management web components for gameplay",
+  "name": "playing-search-elements",
+  "description": "Content search web components for gameplay",
   "version": "1.0.0",
   "license": "MIT",
   "devDependencies": {

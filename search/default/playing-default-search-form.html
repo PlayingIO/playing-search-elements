@@ -1,0 +1,150 @@
+<!--
+`playing-default-search-form`
+@group Playing UI
+@element playing-default-search-form
+-->
+<dom-module id="playing-default-search-form">
+  <template>
+
+    <nuxeo-input role="widget"
+            id="searchInput"
+            type="search"
+            label="[[i18n('defaultSearch.fullText')]]"
+            value="{{searchTerm}}"
+            placeholder="[[i18n('defaultSearch.fullText.placeholder')]]"
+            autofocus
+            on-keydown="_checkForEnter">
+    </nuxeo-input>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.creationDate')]]</label>
+      <mostly-checkbox-aggregation
+              data="[[aggregations.dc_created_agg]]"
+              value="{{params.dc_created_agg}}">
+      </mostly-checkbox-aggregation>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.modifiedDate')]]</label>
+      <mostly-checkbox-aggregation
+              data="[[aggregations.dc_modified_agg]]"
+              value="{{params.dc_modified_agg}}">
+      </mostly-checkbox-aggregation>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.authors')]]</label>
+      <nuxeo-dropdown-aggregation placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
+              data="[[aggregations.dc_creator_agg]]"
+              value="{{params.dc_creator_agg}}"
+              multiple="true"
+              name="authors">
+      </nuxeo-dropdown-aggregation>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.collections')]]</label>
+      <mostly-select2
+              path="collections"
+              operation="find"
+              min-chars="0"
+              placeholder="[[i18n('defaultSearch.collections.placeholder')]]"
+              value="{{params.ecm_collections}}"
+              multiple="true"
+              name="collections">
+      </mostly-select2>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.tags')]]</label>
+      <playing-tag-suggestion min-chars="1"
+              placeholder="[[i18n('defaultSearch.tags.placeholder')]]"
+              value="{{params.ecm_tags}}"
+              multiple="true"
+              name="tags">
+      </playing-tag-suggestion>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.nature')]]</label>
+      <mostly-checkbox-aggregation
+              data="[[aggregations.dc_nature_agg]]"
+              value="{{params.dc_nature_agg}}"
+              name="nature">
+      </mostly-checkbox-aggregation>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.subject')]]</label>
+      <mostly-checkbox-aggregation
+              data="[[aggregations.dc_subjects_agg]]"
+              value="{{params.dc_subjects_agg}}"
+              name="subject">
+      </mostly-checkbox-aggregation>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.coverage')]]</label>
+      <mostly-checkbox-aggregation
+              data="[[aggregations.dc_coverage_agg]]"
+              value="{{params.dc_coverage_agg}}"
+              name="coverage">
+      </mostly-checkbox-aggregation>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.size')]]</label>
+      <mostly-checkbox-aggregation
+              data="[[aggregations.common_size_agg]]"
+              value="{{params.common_size_agg}}"
+              name="size">
+      </mostly-checkbox-aggregation>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-default-search-form',
+      behaviors: [Mostly.I18nBehavior],
+      properties: {
+        params: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+        aggregations: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+        searchTerm: {
+          type: String,
+          notify: true,
+          observer: '_addFullTextSearch'
+        }
+      },
+
+      clear: function() {
+        this.searchTerm = '';
+      },
+
+      _addFullTextSearch: function() {
+        if (this.searchTerm) {
+          this.set('params.ecm_fulltext', this.searchTerm + '*');
+        } else {
+          if (this.params.ecm_fulltext) {
+            this.set('params.ecm_fulltext', '');
+            delete this.params.ecm_fulltext;
+          }
+        }
+      },
+
+      _checkForEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.fire('trigger-search');
+        }
+      }
+
+    });
+  </script>
+</dom-module>

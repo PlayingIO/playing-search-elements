@@ -1,0 +1,785 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-page-provider.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-search.html">
+<link rel="import" href="../../mostly-elements/mostly-layout.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-routing-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-data-list/mostly-data-list.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-select.html">
+<link rel="import" href="../../playing-content-elements/playing-document-permissions/playing-document-permissions.html">
+<link rel="import" href="../../playing-content-elements/playing-document-thumbnail/playing-document-thumbnail.html">
+
+<!--
+ `playing-search-form`
+ @group Nuxeo UI
+ @element playing-search-form
+ -->
+<dom-module id="playing-search-form">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+        display: block;
+      }
+
+      .buttons {
+        @apply(--buttons-bar);
+      }
+
+      .actions {
+        @apply(--nx-actions);
+        padding: 0 1rem;
+      }
+
+      .actions paper-button {
+        @apply(--nx-actions-button);
+      }
+
+      .actions .reset {
+        margin-bottom: 1rem;
+      }
+
+      mostly-data-list {
+        height: calc(100vh - 61px);
+      }
+
+      mostly-data-list {
+        display: block;
+        position: relative;
+      }
+
+      .filters {
+        padding: 1em 0;
+        height: calc(100vh - 61px);
+        overflow: auto;
+      }
+
+      .switch {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 60px;
+        height: 53px;
+        padding: 16px;
+        z-index: 101;
+        border-left: 1px solid var(--divider-color);
+      }
+
+      .switch:hover {
+        background-color: var(--nuxeo-button-primary);
+        color: var(--nuxeo-button-primary-text);
+      }
+
+      nuxeo-select {
+        margin-right: 56px;
+      }
+
+      ::content .unfocused-line.paper-input-container {
+        background-color: transparent;
+      }
+
+      ::content paper-input {
+        --paper-input-container-input: {
+          font-family: var(--nuxeo-app-font);
+        };
+
+        --paper-input-container-underline: {
+          background-color: white;
+        };
+
+        --paper-input-container-underline-focus: {
+          background-color: white;
+        };
+
+        --paper-input-container-label: {
+          font-family: var(--nuxeo-app-font);
+        };
+      }
+
+      .content {
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+        height: calc(100vh - 61px);
+        width: 293px;
+      }
+
+      .header {
+        height: 53px;
+        box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1) inset;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .header h1 {
+        font-size: 1rem;
+        margin: .1em .2em 0 1.1em;
+        font-weight: 500;
+      }
+
+      .header h1,
+      .header ::content .input-content.paper-input-container input {
+        text-transform: uppercase;
+      }
+
+      .row {
+        box-sizing: border-box;
+        margin-bottom: 1rem;
+        padding: 0 1rem;
+        width: 100%;
+      }
+
+      .ellipsis {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      paper-dialog {
+        --paper-dialog: {
+          min-width: 360px;
+        };
+      }
+
+      :host[loading] .loadable {
+        opacity: 0.25;
+      }
+
+      :host[loading] paper-spinner-lite {
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        --paper-spinner-color: var(--default-primary-color);
+      }
+
+      .list-item {
+        cursor: pointer;
+        color: var(--nuxeo-drawer-text);
+        padding: 1em;
+        border-bottom: 1px solid var(--nuxeo-border);
+      }
+
+      .list-item:hover {
+        @apply(--nuxeo-block-hover);
+      }
+
+      .list-item.selected,
+      .list-item:focus,
+      .list-item.selected:focus {
+        @apply(--nuxeo-block-selected);
+      }
+
+      .list-item-property {
+        opacity: .5;
+        margin-right: .2em;
+      }
+
+      ::content mostly-quick-filters {
+        padding: .5em .5em 0;
+        border-bottom: 1px solid var(--nuxeo-border);
+        max-height: 7em;
+        overflow: auto;
+        font-size: .8rem;
+      }
+
+      ::content #checkbox.paper-checkbox {
+        border: 1px solid;
+      }
+
+      ::content *[role=widget] {
+        @apply(--layout-vertical);
+        box-sizing: border-box;
+        margin-bottom: 1rem;
+        padding: 0 1rem;
+        width: 100%;
+      }
+    </style>
+
+    <mostly-page-provider id="provider" auto$="[[_isAuto(auto, visible)]]"
+            provider="[[provider]]"
+            page-size="[[pageSize]]"
+            aggregations="{{aggregations}}"
+            enrichers="thumbnail, permissions"
+            params="[[params]]"
+            quick-filters="{{quickFilters}}"
+            schemas="[[schemas]]"
+            loading="{{loading}}"
+            headers='{"X-NXfetch.document": "properties", "X-NXtranslate.directoryEntry": "label"}'
+            fetch-aggregates
+            on-error="_onError">
+    </mostly-page-provider>
+
+    <mostly-search id="saved-search"></mostly-search>
+
+    <div id="search-container">
+      <div class="header ellipsis search-header">
+        <mostly-search id="saved-searches" searches="{{searches}}" params="[[_computeSavedSearchesParams(provider)]]"></mostly-search>
+        <template is="dom-if" if="[[!onlyQueue]]">
+          <mostly-select id="actionsDropdown" selected="{{selectedSearchIdx}}">
+            <paper-item>[[i18n('searchForm.searchFilters')]]</paper-item>
+            <template is="dom-repeat" items="[[searches]]" as="search">
+              <paper-item>[[search.title]]</paper-item>
+            </template>
+          </mostly-select>
+          <template is="dom-if" if="[[queue]]">
+            <paper-icon-button class="switch" icon="nuxeo:filter" id="toogleFilter" on-tap="_displayFiltersTapped">
+            </paper-icon-button>
+            <paper-tooltip for="toogleFilter">[[i18n('searchForm.displayFilterView')]]</paper-tooltip>
+          </template>
+          <template is="dom-if" if="[[!queue]]">
+            <paper-icon-button class="switch" icon="nuxeo:view-list" id="toogleQueue" on-tap="displayQueueAndNavigateToFirst">
+            </paper-icon-button>
+            <paper-tooltip for="toogleQueue">[[i18n('searchForm.displayQueueView')]]</paper-tooltip>
+          </template>
+        </template>
+        <template is="dom-if" if="[[onlyQueue]]">
+          <h1>[[i18n(label)]]</h1>
+        </template>
+      </div>
+
+      <div class="content">
+        <div id="filters" class="filters loadable" hidden$="{{queue}}">
+          <mostly-layout id="layout" href="[[_formHref(provider, searchName)]]" model="[[_formModel(provider, aggregations, params)]]"
+                  error="[[i18n('documentSearchForm.layoutNotFound', searchName)]]"
+                  on-element-changed="_formChanged"></mostly-layout>
+          <div class="layout vertical row" hidden$="[[!displayAutoControl]]">
+            <paper-toggle-button checked="{{auto}}">[[i18n('searchForm.auto')]]</paper-toggle-button>
+            <paper-tooltip>[[i18n('searchForm.auto.description')]]</paper-tooltip>
+          </div>
+          <div class="actions layout vertical">
+            <paper-button noink class="reset" disabled$="[[!dirty]]" on-tap="_reset" hidden$="[[!_isSavedSearch(selectedSearchIdx)]]">
+              [[i18n('command.Reset')]]
+            </paper-button>
+            <div class="layout horizontal">
+              <paper-button noink class="primary clear" on-tap="_clear">
+                [[i18n('command.clear')]]
+              </paper-button>
+              <paper-button noink class="primary search" on-tap="_search" hidden$="[[auto]]">
+                [[i18n('command.search')]]
+              </paper-button>
+            </div>
+          </div>
+          <paper-spinner-lite active hidden$="[[!loading]]"></paper-spinner-lite>
+        </div>
+
+        <div id="queue" hidden$="{{!queue}}">
+          <mostly-data-list nx-provider="provider" id="list"
+                  selected-item="{{selectedDocument}}"
+                  empty-label="[[i18n('searchForm.queue.noResults')]]"
+                  empty-label-when-filtered=""
+                  selection-enabled
+                  display-quick-filters>
+            <template>
+              <div tabindex$="{{tabIndex}}" class$="[[_computedClass(selected)]]">
+                <div class="list-item-box vertical layout">
+                  <div class="list-item-info horizontal layout center">
+                    <div class="vertical layout center">
+                      <playing-document-thumbnail document="[[item]]"></playing-document-thumbnail>
+                    </div>
+                    <span class="list-item-title ellipsis">[[item.title]]</span>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </mostly-data-list>
+        </div>
+      </div>
+    </div>
+
+    <mostly-dialog id="saveDialog" with-backdrop>
+      <h2>[[i18n('searchForm.savePopup.heading')]]</h2>
+      <paper-input id="savedSearchTitle"
+              label="[[i18n('searchForm.savePopup.label')]]"
+              autofocus
+              no-label-float>
+      </paper-input>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[i18n('command.cancel')]]</paper-button>
+        <paper-button noink class="primary" on-tap="_saveSearch">[[i18n('command.save')]]</paper-button>
+      </div>
+    </mostly-dialog>
+
+    <mostly-dialog id="renameDialog" with-backdrop>
+      <h2>[[i18n('searchForm.renamePopup.heading')]]</h2>
+      <paper-input id="savedSearchRenameTitle"
+              label="[[i18n('searchForm.renamePopup.label')]]"
+              autofocus
+              no-label-float>
+      </paper-input>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[i18n('command.cancel')]]</paper-button>
+        <paper-button noink class="primary" on-tap="_saveSearch">[[i18n('command.save')]]</paper-button>
+      </div>
+    </mostly-dialog>
+
+    <mostly-dialog id="shareDialog" with-backdrop>
+      <h2>[[i18n('searchForm.shared.heading')]]</h2>
+      <playing-document-permissions doc-id="[[selectedSearch.id]]"></playing-document-permissions>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[i18n('command.close')]]</paper-button>
+      </div>
+    </mostly-dialog>
+
+    <mostly-dialog id="deleteDialog" with-backdrop>
+      <h2>[[i18n('searchForm.delete.heading')]]</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[i18n('label.no')]]</paper-button>
+        <paper-button noink class="primary" on-tap="_deleteSearch">[[i18n('label.yes')]]</paper-button>
+      </div>
+    </mostly-dialog>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-search-form',
+
+      behaviors: [Mostly.I18nBehavior, Mostly.RoutingBehavior],
+
+      properties: {
+        /**
+         * The selected saved search.
+         **/
+        selectedSearch: {
+          type: Object,
+          notify: true,
+          observer: '_selectedSearchChanged'
+        },
+        /**
+         * The selected saved search index.
+         **/
+        selectedSearchIdx: {
+          type: Number,
+          value: 0,
+          observer: '_selectedSearchIdxChanged'
+        },
+        /**
+         * The `mostly-page-provider` instance used to perform the search.
+         **/
+        provider: {
+          type: String
+        },
+        /**
+         * The page size passed on to `provider`.
+         **/
+        pageSize: {
+          type: Number,
+          value: 40
+        },
+        /**
+         * The parameters passed on to `provider`.
+         **/
+        params: {
+          type: Object
+        },
+        /**
+         * The schemas passed on to `provider`.
+         **/
+        schemas: {
+          type: String
+        },
+        /**
+         * Gets or sets the mode, `true` if in queue mode, `false` otherwise.
+         **/
+        queue: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * The selected document if in queue mode.
+         **/
+        selectedDocument: {
+          type: Object,
+          observer: '_selectedDocChanged',
+          notify: true
+        },
+        /**
+         * If `true`, the parameters for the currently selected search changed.
+         **/
+        dirty: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        /**
+         * If `true`, a previously saved search is selected.
+         **/
+        isSavedSearch: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        /**
+         * If `true`, only the queue title will be displayed in the header, without the actions dropdown.
+         **/
+        onlyQueue: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * Method used to build `params` from a loaded saved search.
+         **/
+        paramMutator: {
+          type: Function,
+          value: function() {
+            return function(params) {
+              var result = {};
+              if (params) {
+                // filter null values
+                for (var param in params) {
+                  var value = params[param];
+                  if (value && param !== 'dc:title') {
+                    result[param.startsWith('defaults:') ? param.replace('defaults:', '') : param] = value;
+                  }
+                }
+                // allow search to be visible on JSF UI
+                if (!('cvd:contentViewName' in result)) {
+                  result['cvd:contentViewName'] = 'default_search';
+                }
+              }
+              return result;
+            };
+          }
+        },
+        /**
+         * If `true`, requests from `provider` are in flight.
+         **/
+        loading: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+        /**
+         * The name of the search layout.
+         **/
+        searchName: String,
+        /**
+         * The aggregations returned by `provider`.
+         **/
+        aggregations: {
+          type: Object,
+          observer: '_aggregationsChanged'
+        },
+        /**
+         * If `true`, the current element is visible.
+         **/
+        visible: Boolean,
+        /**
+         * If `true`, automatically execute the search each time a param is changed.
+         */
+        auto: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * If `true`, display a toggle control to enable or disable auto mode.
+         */
+        displayAutoControl: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        '_resetResults(provider, params.*, quickFilters.*, query)',
+        '_paramsChanged(params.*)'
+      ],
+
+      ready: function() {
+        var body = document.querySelector('body');
+        body.appendChild(this.$.saveDialog);
+        body.appendChild(this.$.renameDialog);
+        body.appendChild(this.$.shareDialog);
+        body.appendChild(this.$.deleteDialog);
+      },
+
+      get nxProvider() {
+        return this.$.provider;
+      },
+
+      get form() {
+        return this.$.layout.element;
+      },
+
+      displayQueueAndNavigateToFirst: function() {
+        if (this.$.list.$.list.items && this.$.list.$.list.items.length > 0) {
+          this.displayQueue(this.$.list.$.list.items[0]);
+        } else {
+          this.displayQueue();
+        }
+      },
+
+      displayQueue: function(doc) {
+        var doDisplay = function() {
+          this.queue = true;
+          this.$.list.notifyResize();
+          if (doc && doc.id) {
+            this.$.list.$.list.selectItem(doc);
+            this.$.list.$.list.scrollToItem(doc);
+          }
+        }.bind(this);
+        if (!this.auto) {
+          this.$.provider.fetch().then(doDisplay);
+        } else {
+          doDisplay();
+        }
+      },
+
+      _isAuto: function() {
+        return this.visible && this.auto;
+      },
+
+      _resetResults: function() {
+        this.$.list._resetResults();
+      },
+
+      _displayFiltersTapped: function() {
+        this.displayFilters();
+        this._navigateToResults();
+      },
+
+      displayFilters: function() {
+        this.queue = false;
+        this.fire('display-filters');
+      },
+
+      _navigateToResults: function() {
+        this.fire('search-results');
+      },
+
+      _computedClass: function(isSelected) {
+        var classes = 'list-item';
+        if (isSelected) {
+          classes += ' selected';
+        }
+        return classes;
+      },
+
+      _selectedDocChanged: function(doc) {
+        if (doc) {
+          this.navigateTo('browse',  doc.path);
+        }
+      },
+
+      _paramsChanged: function() {
+        this.$.provider.page = 1;
+        this.dirty = true;
+        if (this.form) {
+          this.form.params = this.params;
+        }
+      },
+
+      _selectedSearchIdxChanged: function() {
+        if (this._isSavedSearch()) {
+          this.isSavedSearch = true;
+          this.selectedSearch = this.searches[this.selectedSearchIdx - 1];
+          this.params = this._mutateParams(this.selectedSearch.params);
+          this._navigateToResults();
+        } else {
+          this._clear();
+        }
+        this.dirty = false;
+      },
+
+      _selectedSearchChanged: function() {
+        if (this.selectedSearch) {
+          this.params = this._mutateParams(this.selectedSearch.params);
+          if (this.params && this.params.ecm_fulltext) {
+            this.searchTerm = this.params.ecm_fulltext.replace('*', '');
+            this.form.searchTerm = this.searchTerm;
+          }
+        }
+      },
+
+      _isSavedSearch: function() {
+        return this.selectedSearchIdx > 0;
+      },
+
+      _clear: function() {
+        this.searchTerm = '';
+        this.isSavedSearch = false;
+        this.selectedSearch = {};
+        if (this.form && this.form.clear != undefined && typeof this.form.clear == 'function') {
+          this.form.clear();
+        }
+        this.params = {};
+        if (!this._isSavedSearch()) {
+          this.dirty = false;
+        }
+        this.selectedSearchIdx = 0;
+        this._resetResults();
+        if (!this.auto) {
+          this.aggregations = {};
+        }
+      },
+
+      _search: function() {
+        this.$.provider.page = 1;
+        return this.$.provider.fetch().then(this._navigateToResults.bind(this));
+      },
+
+      _reset: function() {
+        var _el = this.$['saved-search'];
+        _el.searchId = this.selectedSearch.id;
+        _el.get().then(function(response) {
+          this.params = this._mutateParams(response.params);
+          this.searchTerm = this.params.ecm_fulltext ? this.params.ecm_fulltext.replace('*', '') : '';
+          this.form.searchTerm = this.searchTerm;
+          this.dirty = false;
+        }.bind(this));
+      },
+
+      saveAs: function() {
+        this.$$('#actionsDropdown').close();
+        this.$.savedSearchTitle.value = '';
+        this.$.saveDialog.open();
+        this._saveAs = true;
+      },
+
+      save: function() {
+        if (this.selectedSearchIdx === 0) {
+          this.saveAs();
+        } else {
+          this._saveSearch();
+        }
+      },
+
+      rename: function() {
+        this._renaming = true;
+        this.$$('#actionsDropdown').close();
+        this.$.renameDialog.open();
+        this.$.savedSearchRenameTitle.value = this.selectedSearch.title;
+      },
+
+      share: function() {
+        this.$$('#actionsDropdown').close();
+        this.$.shareDialog.open();
+      },
+
+      delete: function() {
+        this.$$('#actionsDropdown').close();
+        this.$.deleteDialog.open();
+      },
+
+      _saveSearch: function() {
+        var _el = this.$['saved-search'];
+        // save a new search
+        if (this.selectedSearchIdx === 0 || this._saveAs) {
+          _el.searchId = '';
+          _el.data = {
+            'type': 'savedSearch',
+            'pageProviderName': this.provider,
+            'params': this.params,
+            'title': this.$$('#savedSearchTitle').value
+          };
+          _el.post().then((response) => {
+            this.$.saveDialog.close();
+            this.selectedSearch = response;
+            this.$['saved-searches'].get().then(() => {
+              this.selectedSearchIdx = this.searches.length;
+            });
+          });
+        } else {
+          // update an existing search
+          _el.searchId = this.selectedSearch.id;
+          _el.data = this.selectedSearch;
+          if (this._renaming) {
+            _el.data.title = this.$.savedSearchRenameTitle.value;
+            _el.data.params = this._mutateParams(_el.data.params);
+          } else {
+            _el.data.params = this.params;
+          }
+          _el.put().then(() => {
+            if (this._renaming) {
+              this.$.renameDialog.close();
+
+              this.set('searches.' + (this.selectedSearchIdx - 1) + '.title', _el.data.title);
+              // hack required to update the paper-input inside the paper-dropdown-menu
+              var idx = this.selectedSearchIdx;
+              this.selectedSearchIdx = 0;
+              this.selectedSearchIdx = idx;
+              this._renaming = false;
+            }
+            this.dirty = false;
+          });
+        }
+        this._saveAs = false;
+      },
+
+      _deleteSearch: function() {
+        var _el = this.$['saved-search'];
+        _el.searchId = this.selectedSearch.id;
+        _el.remove().then(() => {
+          this.$.deleteDialog.close();
+          this.$['saved-searches'].get().then(() => {
+            // hack required to update the paper-input inside the paper-dropdown-menu
+            this.selectedSearchIdx = 0;
+            this.selectedSearchIdx = this.searches.length;
+          });
+        });
+      },
+
+      _mutateParams: function(params) {
+        return this.paramMutator ? this.paramMutator(params) : params;
+      },
+
+      _computeSavedSearchesParams: function() {
+        return {pageProvider: this.provider};
+      },
+
+      _aggregationsChanged: function() {
+        if (this.form) {
+          this.form.aggregations = this.aggregations;
+        }
+      },
+
+      _formHref: function (provider, searchName) {
+        var name = (searchName || provider).toLowerCase();
+        return this.resolveUrl(name + '/' + ['playing', name, 'search-form'].join('-') + '.html');
+      },
+
+      _formModel: function () {
+        return { provider: this.provider, params: this.params, aggregations: this.aggregations };
+      },
+
+      _formChanged: function() {
+        this._clear();
+
+        if (this.queue) {
+          this.displayQueue();
+        } else {
+          this.displayFilters();
+        }
+
+        this.$['saved-searches'].get();
+        if (this.form.params !== undefined) {
+          this.params = this.form.params;
+        }
+        // setup data binding
+        this.form.addEventListener('params-changed', (e) => {
+          // e.detail.path is params.prop_name eg: params.ecm_fulltext
+          if (e.detail.path) {
+            var param = e.detail.path.split('.')[1];
+            this.set('params.' + param, e.detail.value);
+            if (this.auto) {
+              this._navigateToResults();
+            }
+          }
+        });
+        this.form.addEventListener('trigger-search', this._search.bind(this));
+      },
+
+      _onError: function(e) {
+        this.fire('notify', e.detail.error);
+      }
+
+    });
+  </script>
+</dom-module>
