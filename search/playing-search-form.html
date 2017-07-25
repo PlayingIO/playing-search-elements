@@ -211,7 +211,7 @@
             quick-filters="{{quickFilters}}"
             schemas="[[schemas]]"
             loading="{{loading}}"
-            fetch-aggregates
+            fetch-aggregates="authors, coverage, createdAt, updatedAt, nature, size, subjects"
             on-error="_onError">
     </mostly-page-provider>
 
@@ -749,7 +749,11 @@
       },
 
       _formModel: function () {
-        return { provider: this.provider, params: this.params, aggregations: this.aggregations };
+        return {
+          provider: this.provider,
+          params: this.params,
+          aggregations: this.aggregations
+        };
       },
 
       _formChanged: function() {

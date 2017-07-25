@@ -19,27 +19,27 @@
     <div role="widget">
       <label>[[i18n('defaultSearch.creationDate')]]</label>
       <mostly-checkbox-aggregation
-              data="[[aggregations.dc_created_agg]]"
-              value="{{params.dc_created_agg}}">
+              data="[[aggregations.createdAt]]"
+              value="{{params.createdAt}}">
       </mostly-checkbox-aggregation>
     </div>
 
     <div role="widget">
       <label>[[i18n('defaultSearch.modifiedDate')]]</label>
       <mostly-checkbox-aggregation
-              data="[[aggregations.dc_modified_agg]]"
-              value="{{params.dc_modified_agg}}">
+              data="[[aggregations.updatedAt]]"
+              value="{{params.updatedAt}}">
       </mostly-checkbox-aggregation>
     </div>
 
     <div role="widget">
       <label>[[i18n('defaultSearch.authors')]]</label>
-      <nuxeo-dropdown-aggregation placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
-              data="[[aggregations.dc_creator_agg]]"
-              value="{{params.dc_creator_agg}}"
+      <mostly-dropdown-aggregation placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
+              data="[[aggregations.authors]]"
+              value="{{params.authors}}"
               multiple="true"
               name="authors">
-      </nuxeo-dropdown-aggregation>
+      </mostly-dropdown-aggregation>
     </div>
 
     <div role="widget">
@@ -49,7 +49,7 @@
               operation="find"
               min-chars="0"
               placeholder="[[i18n('defaultSearch.collections.placeholder')]]"
-              value="{{params.ecm_collections}}"
+              value="{{params.collections}}"
               multiple="true"
               name="collections">
       </mostly-select2>
@@ -59,7 +59,7 @@
       <label>[[i18n('defaultSearch.tags')]]</label>
       <playing-tag-suggestion min-chars="1"
               placeholder="[[i18n('defaultSearch.tags.placeholder')]]"
-              value="{{params.ecm_tags}}"
+              value="{{params.tags}}"
               multiple="true"
               name="tags">
       </playing-tag-suggestion>
@@ -68,8 +68,8 @@
     <div role="widget">
       <label>[[i18n('defaultSearch.nature')]]</label>
       <mostly-checkbox-aggregation
-              data="[[aggregations.dc_nature_agg]]"
-              value="{{params.dc_nature_agg}}"
+              data="[[aggregations.nature]]"
+              value="{{params.nature}}"
               name="nature">
       </mostly-checkbox-aggregation>
     </div>
@@ -77,8 +77,8 @@
     <div role="widget">
       <label>[[i18n('defaultSearch.subject')]]</label>
       <mostly-checkbox-aggregation
-              data="[[aggregations.dc_subjects_agg]]"
-              value="{{params.dc_subjects_agg}}"
+              data="[[aggregations.subjects]]"
+              value="{{params.subjects}}"
               name="subject">
       </mostly-checkbox-aggregation>
     </div>
@@ -86,8 +86,8 @@
     <div role="widget">
       <label>[[i18n('defaultSearch.coverage')]]</label>
       <mostly-checkbox-aggregation
-              data="[[aggregations.dc_coverage_agg]]"
-              value="{{params.dc_coverage_agg}}"
+              data="[[aggregations.coverage]]"
+              value="{{params.coverage}}"
               name="coverage">
       </mostly-checkbox-aggregation>
     </div>
@@ -95,8 +95,8 @@
     <div role="widget">
       <label>[[i18n('defaultSearch.size')]]</label>
       <mostly-checkbox-aggregation
-              data="[[aggregations.common_size_agg]]"
-              value="{{params.common_size_agg}}"
+              data="[[aggregations.size]]"
+              value="{{params.size}}"
               name="size">
       </mostly-checkbox-aggregation>
     </div>
