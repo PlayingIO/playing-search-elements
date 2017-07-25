@@ -8,7 +8,12 @@
 
     <mostly-results name="default" nx-provider="[[nxProvider]]" selected-items="{{selectedItems}}">
 
-      <mostly-data-grid name="grid" icon="nuxeo:view-thumbnails" class="results" empty-label="[[i18n('searchResults.noResults')]]" selection-enabled display-quick-filters>
+      <mostly-data-grid name="grid"
+              icon="nuxeo:view-thumbnails"
+              class="results"
+              empty-label="[[i18n('searchResults.noResults')]]"
+              selection-enabled
+              display-quick-filters>
         <template>
           <playing-document-grid-thumbnail
                   tabindex$="{{tabIndex}}"
@@ -27,22 +32,22 @@
               display-quick-filters
               on-row-clicked="_navigate">
 
-        <mostly-data-table-column name="[[i18n('label.dublincore.title')]]" field="dc:title" sort-by="dc:title" flex="100">
+        <mostly-data-table-column name="[[i18n('label.dublincore.title')]]" field="title" sort-by="title" flex="100">
           <template>
             <playing-document-thumbnail document="[[item]]"></playing-document-thumbnail>
             <a class="ellipsis" href$="[[urlFor('browse', item.path)]]" on-tap="_navigate">[[item.title]]</a>
           </template>
         </mostly-data-table-column>
 
-        <mostly-data-table-column name="[[i18n('label.dublincore.modified')]]" field="dc:modified" sort-by="dc:modified" flex="50">
+        <mostly-data-table-column name="[[i18n('label.dublincore.updatedAt')]]" field="updatedAt" sort-by="updatedAt" flex="50">
           <template>
-            <nuxeo-date datetime="[[item.properties.dc:modified]]"></nuxeo-date>
+            <nuxeo-date datetime="[[item.updatedAt]]"></nuxeo-date>
           </template>
         </mostly-data-table-column>
 
-        <mostly-data-table-column name="[[i18n('label.dublincore.lastContributor')]]" field="dc:lastContributor" sort-by="dc:lastContributor" flex="50">
+        <mostly-data-table-column name="[[i18n('label.dublincore.lastContributor')]]" field="lastContributor" sort-by="lastContributor" flex="50">
           <template>
-            <playing-user-tag user="[[item.properties.dc:lastContributor]]"></playing-user-tag>
+            <playing-user-tag user="[[item.lastContributor]]"></playing-user-tag>
           </template>
         </mostly-data-table-column>
 
@@ -58,33 +63,33 @@
           </template>
         </mostly-data-table-column>
 
-        <mostly-data-table-column name="[[i18n('label.dublincore.created')]]" field="dc:created" sort-by="dc:created" flex="50" hidden>
+        <mostly-data-table-column name="[[i18n('label.dublincore.createdAt')]]" field="createdAt" sort-by="createdAt" flex="50" hidden>
           <template>
-            <nuxeo-date datetime="[[item.properties.dc:created]]"></nuxeo-date>
+            <nuxeo-date datetime="[[item.createdAt]]"></nuxeo-date>
           </template>
         </mostly-data-table-column>
 
-        <mostly-data-table-column name="[[i18n('label.dublincore.author')]]" field="dc:creator" sort-by="dc:creator" hidden>
+        <mostly-data-table-column name="[[i18n('label.dublincore.creator')]]" field="creator" sort-by="creator" hidden>
           <template>
-            <playing-user-tag user="[[item.properties.dc:creator]]"></playing-user-tag>
+            <playing-user-tag user="[[item.creator]]"></playing-user-tag>
           </template>
         </mostly-data-table-column>
 
-        <mostly-data-table-column name="[[i18n('label.dublincore.nature')]]" field="dc:nature" hidden>
+        <mostly-data-table-column name="[[i18n('label.dublincore.nature')]]" field="nature" hidden>
           <template>
-            <mostly-tag hidden$="[[!item.properties.dc:nature]]">[[formatDirectory(item.properties.dc:nature)]]</mostly-tag>
+            <mostly-tag hidden$="[[!item.nature]]">[[formatDirectory(item.nature)]]</mostly-tag>
           </template>
         </mostly-data-table-column>
 
-        <mostly-data-table-column name="[[i18n('label.dublincore.coverage')]]" field="dc:coverage" hidden>
+        <mostly-data-table-column name="[[i18n('label.dublincore.coverage')]]" field="coverage" hidden>
           <template>
-            <mostly-tag hidden$="[[!item.properties.dc:coverage]]">[[formatDirectory(item.properties.dc:coverage)]]</mostly-tag>
+            <mostly-tag hidden$="[[!item.coverage]]">[[formatDirectory(item.coverage)]]</mostly-tag>
           </template>
         </mostly-data-table-column>
 
-        <mostly-data-table-column name="[[i18n('label.dublincore.subjects')]]" field="dc:subjects" hidden flex="60">
+        <mostly-data-table-column name="[[i18n('label.dublincore.subjects')]]" field="subjects" hidden flex="60">
           <template>
-            <template is="dom-repeat" items="[[item.properties.dc:subjects]]" as="subject">
+            <template is="dom-repeat" items="[[item.subjects]]" as="subject">
               <mostly-tag>[[formatDirectory(subject)]]</mostly-tag>
             </template>
           </template>

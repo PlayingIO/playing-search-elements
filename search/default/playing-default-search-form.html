@@ -34,12 +34,16 @@
 
     <div role="widget">
       <label>[[i18n('defaultSearch.authors')]]</label>
-      <mostly-dropdown-aggregation placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
-              data="[[aggregations.authors]]"
+      <mostly-select2
+              path="users"
+              operation="find"
+              search-field="nickname"
+              display-field="nickname"
+              min-chars="1"
+              placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
               value="{{params.authors}}"
               multiple="true"
-              name="authors">
-      </mostly-dropdown-aggregation>
+              name="authors"></mostly-select2>
     </div>
 
     <div role="widget">
@@ -47,12 +51,13 @@
       <mostly-select2
               path="collections"
               operation="find"
+              search-field="title"
+              display-field="title"
               min-chars="0"
               placeholder="[[i18n('defaultSearch.collections.placeholder')]]"
               value="{{params.collections}}"
               multiple="true"
-              name="collections">
-      </mostly-select2>
+              name="collections"></mostly-select2>
     </div>
 
     <div role="widget">
@@ -67,20 +72,22 @@
 
     <div role="widget">
       <label>[[i18n('defaultSearch.nature')]]</label>
-      <mostly-checkbox-aggregation
+      <mostly-dropdown-aggregation placeholder="[[i18n('defaultSearch.nature.placeholder')]]"
               data="[[aggregations.nature]]"
               value="{{params.nature}}"
+              multiple="true"
               name="nature">
-      </mostly-checkbox-aggregation>
+      </mostly-dropdown-aggregation>
     </div>
 
     <div role="widget">
-      <label>[[i18n('defaultSearch.subject')]]</label>
-      <mostly-checkbox-aggregation
+      <label>[[i18n('defaultSearch.subjects')]]</label>
+      <mostly-dropdown-aggregation placeholder="[[i18n('defaultSearch.subjects.placeholder')]]"
               data="[[aggregations.subjects]]"
               value="{{params.subjects}}"
-              name="subject">
-      </mostly-checkbox-aggregation>
+              multiple="true"
+              name="subjects">
+      </mostly-dropdown-aggregation>
     </div>
 
     <div role="widget">
@@ -130,11 +137,11 @@
 
       _addFullTextSearch: function() {
         if (this.searchTerm) {
-          this.set('params.ecm_fulltext', this.searchTerm + '*');
+          this.set('params.searchTerm', this.searchTerm);
         } else {
-          if (this.params.ecm_fulltext) {
-            this.set('params.ecm_fulltext', '');
-            delete this.params.ecm_fulltext;
+          if (this.params.searchTerm) {
+            this.set('params.searchTerm', '');
+            delete this.params.searchTerm;
           }
         }
       },

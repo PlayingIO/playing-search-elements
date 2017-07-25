@@ -17,8 +17,8 @@
     <div role="widget">
       <label>[[i18n('defaultSearch.authors')]]</label>
       <mostly-dropdown-aggregation placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
-              data="[[aggregations.dc_creator_agg]]"
-              value="{{params.dc_creator_agg}}"
+              data="[[aggregations.authors]]"
+              value="{{params.authors}}"
               multiple="true">
       </mostly-dropdown-aggregation>
     </div>
@@ -36,7 +36,7 @@
             var oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
             return {
-              "expired_max" : oneWeekAgo.toJSON()
+              "expiredMax" : oneWeekAgo.toJSON()
             }
           },
           notify: true
@@ -55,9 +55,9 @@
 
       _addFullTextSearch: function() {
         if (this.searchTerm) {
-          this.set('params.title', this.searchTerm + '*');
+          this.set('params.title', this.searchTerm);
         } else {
-          if (this.params.ecm_fulltext) {
+          if (this.params.title) {
             this.set('params.title', '');
             delete this.params.title;
           }
