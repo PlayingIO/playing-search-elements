@@ -6,7 +6,6 @@
 <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-page-provider.html">
-<link rel="import" href="../../mostly-elements/mostly-common/mostly-search.html">
 <link rel="import" href="../../mostly-elements/mostly-layout.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-routing-behavior.html">
@@ -15,6 +14,7 @@
 <link rel="import" href="../../mostly-elements/widgets/mostly-select.html">
 <link rel="import" href="../../playing-content-elements/playing-document-permissions/playing-document-permissions.html">
 <link rel="import" href="../../playing-content-elements/playing-document-thumbnail/playing-document-thumbnail.html">
+<link rel="import" href="../playing-search.html">
 
 <!--
  `playing-search-form`
@@ -211,16 +211,17 @@
             quick-filters="{{quickFilters}}"
             schemas="[[schemas]]"
             loading="{{loading}}"
-            headers='{"X-NXfetch.document": "properties", "X-NXtranslate.directoryEntry": "label"}'
             fetch-aggregates
             on-error="_onError">
     </mostly-page-provider>
 
-    <mostly-search id="saved-search"></mostly-search>
+    <playing-search id="saved-search"></playing-search>
 
     <div id="search-container">
       <div class="header ellipsis search-header">
-        <mostly-search id="saved-searches" searches="{{searches}}" params="[[_computeSavedSearchesParams(provider)]]"></mostly-search>
+        <playing-search id="saved-searches"
+                searches="{{searches}}"
+                params="[[_computeSavedSearchesParams(provider)]]"></playing-search>
         <template is="dom-if" if="[[!onlyQueue]]">
           <mostly-select id="actionsDropdown" selected="{{selectedSearchIdx}}">
             <paper-item>[[i18n('searchForm.searchFilters')]]</paper-item>
@@ -246,7 +247,9 @@
 
       <div class="content">
         <div id="filters" class="filters loadable" hidden$="{{queue}}">
-          <mostly-layout id="layout" href="[[_formHref(provider, searchName)]]" model="[[_formModel(provider, aggregations, params)]]"
+          <mostly-layout id="layout"
+                  href="[[_formHref(provider, searchName)]]"
+                  model="[[_formModel(provider, aggregations, params)]]"
                   error="[[i18n('documentSearchForm.layoutNotFound', searchName)]]"
                   on-element-changed="_formChanged"></mostly-layout>
           <div class="layout vertical row" hidden$="[[!displayAutoControl]]">
@@ -517,14 +520,14 @@
       },
 
       displayQueue: function(doc) {
-        var doDisplay = function() {
+        var doDisplay = () => {
           this.queue = true;
           this.$.list.notifyResize();
           if (doc && doc.id) {
             this.$.list.$.list.selectItem(doc);
             this.$.list.$.list.scrollToItem(doc);
           }
-        }.bind(this);
+        };
         if (!this.auto) {
           this.$.provider.fetch().then(doDisplay);
         } else {
@@ -628,12 +631,12 @@
       _reset: function() {
         var _el = this.$['saved-search'];
         _el.searchId = this.selectedSearch.id;
-        _el.get().then(function(response) {
+        _el.get().then((response) => {
           this.params = this._mutateParams(response.params);
           this.searchTerm = this.params.ecm_fulltext ? this.params.ecm_fulltext.replace('*', '') : '';
           this.form.searchTerm = this.searchTerm;
           this.dirty = false;
-        }.bind(this));
+        });
       },
 
       saveAs: function() {
