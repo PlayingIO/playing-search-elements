@@ -1,0 +1,116 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
+<link rel="import" href="../playing-document/playing-document.html">
+
+<!--
+`playing-saved-search-actions`
+@group Nuxeo UI
+@element playing-saved-search-actions
+-->
+<dom-module id="playing-saved-search-actions">
+  <template>
+
+    <style>
+      paper-item {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        cursor: pointer;
+      }
+      iron-icon {
+        margin-right: 16px;
+      }
+    </style>
+
+    <playing-document auto doc-id="[[searchId]]" enrichers="permissions" response="{{searchDoc}}"></playing-document>
+
+    <div class="horizontal layout center">
+      <paper-button on-tap="_saveSearchAs" hidden$="[[!_showSaveAs(searchDoc, isSavedSearch, searchForm.dirty)]]">
+        <iron-icon icon="nuxeo:filter-edit"></iron-icon>[[i18n('app.saveNewSearch')]]
+      </paper-button>
+      <paper-button on-tap="_saveSearch" hidden$="[[!_showSave(searchDoc, isSavedSearch, searchFrom.dirty)]]">
+        <iron-icon icon="nuxeo:filter-add"></iron-icon>[[i18n('app.savedSearch')]]
+      </paper-button>
+      <paper-menu-button no-animations horizontal-align="right" vertical-offset="40"
+                         hidden$="[[!_showOtherSearchActions(searchDoc, isSavedSearch, searchForm.dirty)]]">
+        <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="menu"></paper-icon-button>
+        <paper-menu class="dropdown-content layout vertical">
+          <paper-item on-tap="_renameSearch">
+            <iron-icon icon="nuxeo:edit"></iron-icon>[[i18n('app.renameSearch')]]
+          </paper-item>
+          <paper-item on-tap="_shareSearch">
+            <iron-icon icon="nuxeo:share"></iron-icon>[[i18n('app.shareSearch')]]
+          </paper-item>
+          <paper-item on-tap="_deleteSearch">
+            <iron-icon icon="nuxeo:delete"></iron-icon>[[i18n('app.deleteSearch')]]
+          </paper-item>
+        </paper-menu>
+      </paper-menu-button>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'playing-saved-search-actions',
+      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior],
+      properties: {
+        searchId: String,
+        searchDoc: Object,
+        searchForm: Object
+      },
+
+      set searchForm(form) {
+        this.searchForm = form;
+        this.searchId = this._searchForm.selectedSearch.id;
+        this.isSavedSearch = !!this.searchId; //this._searchForm.isSavedSearch;
+      },
+
+      get searchForm() {
+        return this._searchForm;
+      },
+
+      _saveSearch: function() {
+        this.searchForm.save();
+      },
+
+      _saveSearchAs: function() {
+        this.searchForm.saveAs();
+      },
+
+      _renameSearch: function() {
+        this.searchForm.rename();
+      },
+
+      _shareSearch: function() {
+        this.searchForm.share();
+      },
+
+      _deleteSearch: function() {
+        this.searchForm.delete();
+      },
+
+      _showSaveAs: function() {
+        return this.isSavedSearch || (!this.isSavedSearch && this.searchForm.dirty);
+      },
+
+      _showSave: function() {
+        return this.isSavedSearch && this.searchForm.dirty && this._hasPermissions();
+      },
+
+      _showOtherSearchActions: function() {
+        return this.isSavedSearch && this._hasPermissions();
+      },
+
+      _hasPermissions: function() {
+        return this.searchDoc ? (this.searchDoc.contextParameters.permissions.indexOf('Write') > -1
+          || this.searchDoc.contextParameters.permissions.indexOf('Everything') > -1) : false;
+      }
+    });
+  </script>
+</dom-module>
