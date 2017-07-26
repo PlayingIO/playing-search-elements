@@ -633,7 +633,7 @@
         _el.searchId = this.selectedSearch.id;
         _el.get().then((response) => {
           this.params = this._mutateParams(response.params);
-          this.searchTerm = this.params.ecm_fulltext ? this.params.ecm_fulltext.replace('*', '') : '';
+          this.searchTerm = this.params.searchTerm || '';
           this.form.searchTerm = this.searchTerm;
           this.dirty = false;
         });

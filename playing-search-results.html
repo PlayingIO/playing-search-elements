@@ -45,7 +45,7 @@
     Polymer({
       is: 'playing-search-results',
 
-      behaviors: [Nuxeo.I18nBehavior],
+      behaviors: [Mostly.I18nBehavior],
 
       properties: {
         searchForm: {
@@ -63,12 +63,15 @@
       },
 
       _searchFormChanged: function(searchForm) {
-        this.nxProvider = searchForm.nxProvider;
-        this.searchName = searchForm.searchName;
+        console.log('_searchFormChanged', searchForm);
+        if (searchForm) {
+          this.nxProvider = searchForm.nxProvider;
+          this.searchName = searchForm.searchName;
 
-        var name = ['playing', this.searchName.toLowerCase(), 'search-results'].join('-');
-        this._resultsHref = this.resolveUrl(['search', this.searchName.toLowerCase(), name + '.html'].join('/'));
-        this._resultsModel = { nxProvider: this.nxProvider, name: this.searchName };
+          var name = ['playing', this.searchName.toLowerCase(), 'search-results'].join('-');
+          this._resultsHref = this.resolveUrl(['search', this.searchName.toLowerCase(), name + '.html'].join('/'));
+          this._resultsModel = { nxProvider: this.nxProvider, name: this.searchName };
+        }
       },
 
       _navigateFromSearch: function(e) {
