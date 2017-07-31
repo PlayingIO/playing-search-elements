@@ -438,13 +438,9 @@
                 // filter null values
                 for (var param in params) {
                   var value = params[param];
-                  if (value && param !== 'dc:title') {
+                  if (value && param !== 'title') {
                     result[param.startsWith('defaults:') ? param.replace('defaults:', '') : param] = value;
                   }
-                }
-                // allow search to be visible on JSF UI
-                if (!('cvd:contentViewName' in result)) {
-                  result['cvd:contentViewName'] = 'default_search';
                 }
               }
               return result;
@@ -678,7 +674,7 @@
           _el.searchId = '';
           _el.data = {
             'type': 'savedSearch',
-            'pageProviderName': this.provider,
+            'pageProvider': this.provider,
             'params': this.params,
             'title': this.$$('#savedSearchTitle').value
           };
@@ -699,7 +695,7 @@
           } else {
             _el.data.params = this.params;
           }
-          _el.put().then(() => {
+          _el.patch().then(() => {
             if (this._renaming) {
               this.$.renameDialog.close();
 
