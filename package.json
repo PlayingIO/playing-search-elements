@@ -1,6 +1,6 @@
 {
   "name": "playing-search-elements",
-  "description": "Content search web components for gameplay",
+  "description": "Content search web components for playful application",
   "version": "1.0.0",
   "license": "MIT",
   "devDependencies": {
