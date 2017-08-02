@@ -108,8 +108,8 @@
       },
 
       _hasPermissions: function() {
-        return this.searchDoc ? (this.searchDoc.contextParameters.permissions.indexOf('Write') > -1
-          || this.searchDoc.contextParameters.permissions.indexOf('Everything') > -1) : false;
+        return this.searchDoc ? (this.searchDoc.metadata.permissions.indexOf('Write') > -1
+          || this.searchDoc.metadata.permissions.indexOf('Everything') > -1) : false;
       }
     });
   </script>
