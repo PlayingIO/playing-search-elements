@@ -32,23 +32,23 @@
 
     <div class="horizontal layout center">
       <paper-button on-tap="_saveSearchAs" hidden$="[[!_showSaveAs(searchDoc, isSavedSearch, searchForm.dirty)]]">
-        <iron-icon icon="nuxeo:filter-edit"></iron-icon>[[i18n('app.saveNewSearch')]]
+        <iron-icon icon="mostly:filter-edit"></iron-icon>[[i18n('app.saveNewSearch')]]
       </paper-button>
       <paper-button on-tap="_saveSearch" hidden$="[[!_showSave(searchDoc, isSavedSearch, searchFrom.dirty)]]">
-        <iron-icon icon="nuxeo:filter-add"></iron-icon>[[i18n('app.savedSearch')]]
+        <iron-icon icon="mostly:filter-add"></iron-icon>[[i18n('app.savedSearch')]]
       </paper-button>
       <paper-menu-button no-animations horizontal-align="right" vertical-offset="40"
                          hidden$="[[!_showOtherSearchActions(searchDoc, isSavedSearch, searchForm.dirty)]]">
         <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="menu"></paper-icon-button>
         <paper-menu class="dropdown-content layout vertical">
           <paper-item on-tap="_renameSearch">
-            <iron-icon icon="nuxeo:edit"></iron-icon>[[i18n('app.renameSearch')]]
+            <iron-icon icon="mostly:edit"></iron-icon>[[i18n('app.renameSearch')]]
           </paper-item>
           <paper-item on-tap="_shareSearch">
-            <iron-icon icon="nuxeo:share"></iron-icon>[[i18n('app.shareSearch')]]
+            <iron-icon icon="mostly:share"></iron-icon>[[i18n('app.shareSearch')]]
           </paper-item>
           <paper-item on-tap="_deleteSearch">
-            <iron-icon icon="nuxeo:delete"></iron-icon>[[i18n('app.deleteSearch')]]
+            <iron-icon icon="mostly:delete"></iron-icon>[[i18n('app.deleteSearch')]]
           </paper-item>
         </paper-menu>
       </paper-menu-button>
