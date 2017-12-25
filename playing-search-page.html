@@ -1,0 +1,152 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../mostly-elements/behaviors/mostly-i18n-behavior.html">
+
+<!--
+`playing-search-page`
+@group Nuxeo UI
+@element playing-search-page
+-->
+<dom-module id="playing-search-page">
+  <template>
+
+    <style>
+      .title {
+        @apply --layout-flex;
+      }
+
+      playing-saved-search-actions {
+        @apply --layout-end-justified;
+      }
+    </style>
+
+    <mostly-page>
+      <div class="header" slot="header">
+        <span class="title">[[i18n(heading)]]</span>
+        <template is="dom-if" if="[[showSavedSearchActions]]">
+          <playing-saved-search-actions id="actions" class="actions" search-form="[[searchForm]]"></playing-saved-search-actions>
+        </template>
+      </div>
+      <div class="content">
+        <playing-results-view provider="[[provider]]"
+                page-size="[[pageSize]]"
+                params="[[params]]"
+                quick-filters="{{quickFilters}}"
+                schemas="[[schemas]]"
+                enrichers="[[enrichers]]"
+                headers="[[headers]]"
+                loading="[[loading]]"
+                search-name="[[searchName]]"
+                aggregations="{{aggregations}}"
+                visible="[[visible]]"
+                auto="[[auto]]"
+                show-filters="[[showFilters]]"
+                opened="[[opened]]"
+                search-form="[[searchForm]]"></playing-results-view>
+      </div>
+    </mostly-page>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-search-page',
+
+      behaviors: [Mostly.I18nBehavior],
+
+      properties: {
+        showSavedSearchActions: {
+          type: Boolean,
+          value: false
+        },
+        heading: String,
+        /**
+         * The `playing-page-provider` instance used to perform the search.
+         **/
+        provider: String,
+        /**
+         * The page size passed on to `provider`.
+         **/
+        pageSize: Number,
+        /**
+         * The parameters passed on to `provider`.
+         **/
+        params: Object,
+        /**
+         * The schemas passed on to `provider`.
+         **/
+        schemas: String,
+        /**
+         * List of content enrichers passed on to `provider`.
+         */
+        enrichers: String,
+        /**
+         * The headers passed on to `provider`.
+         */
+        headers: String,
+        /**
+         * If `true`, requests from `provider` are in flight.
+         **/
+        loading: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+        /**
+         * The name of the search layout.
+         **/
+        searchName: String,
+        /**
+         * The aggregations returned by `provider`.
+         **/
+        aggregations: {
+          type: Object,
+          notify: true
+        },
+        /**
+         * Quick filters state of `provider`.
+         */
+        quickFilters: {
+          type: Array,
+          notify: true
+        },
+        /**
+         * If `true`, the current element is visible.
+         **/
+        visible: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * If `true`, automatically execute the search each time a param is changed.
+         */
+        auto: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * If `true`, display the top filtering panel.
+         */
+        showFilters: {
+          type: Boolean,
+          value: false
+        },
+        /*
+         * If `true`, opens the collapsible top filtering panel.
+         */
+        opened: {
+          type: Boolean,
+          value: false
+        },
+        /*
+         * An external search form (containing its own page provider) will be used, instead of the embeded one.
+         * In case this is set, the following properties should be ignored, as the behavior they affect will be
+         * controlled by the search form: `provider`, `pageSize`, `params`, `schemas`, `enrichers`, `headers`,
+         * `loading`, `aggregations`, `quickFilters` and `auto`.
+         */
+        searchForm: Object
+      }
+
+    });
+  </script>
+
+</dom-module>
