@@ -1,0 +1,113 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../paper-tooltip/paper-tooltip.html">
+
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-routing-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-page-provider.html">
+<link rel="import" href="../../mostly-elements/mostly-data-list/mostly-data-list.html">
+<link rel="import" href="../../mostly-elements/mostly-layout.html">
+<link rel="import" href="../../mostly-elements/mostly-search.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-select.html">
+<link rel="import" href="../../playing-content-elements/playing-document-permissions/playing-document-permissions.html">
+<link rel="import" href="../../playing-content-elements/playing-document-thumbnail/playing-document-thumbnail.html">
+
+<!--
+ `playing-search-form-layout`
+ @group Playing UI
+ @element playing-search-form-layout
+ -->
+<dom-module id="playing-search-form-layout">
+  <template>
+
+    <mostly-layout id="layout"
+                  href="[[_formHref(provider, searchName)]]"
+                  model="[[_formModel(provider, aggregations, params)]]"
+                  error="[[i18n('documentSearchForm.layoutNotFound', searchName)]]"
+                  on-element-changed="_formChanged"></mostly-layout>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-search-form-layout',
+
+      behaviors: [Mostly.I18nBehavior, Mostly.RoutingBehavior],
+
+      properties: {
+        /**
+         * The `mostly-page-provider` instance used to perform the search.
+         **/
+        provider: String,
+        /**
+         * The name of the search layout.
+         **/
+        searchName: String,
+        /**
+         * The parameters passed on to `provider`.
+         **/
+        params: {
+          type: Object,
+          notify: true
+        },
+        /**
+         * The aggregations returned by `provider`.
+         **/
+        aggregations: {
+          type: Object,
+          observer: '_aggregationsChanged'
+        },
+        /**
+         * An object propagating key/values served by enclosing slot contents.
+         */
+        model: {
+          type: Object,
+          value: function() { return {}; }
+        }
+      },
+
+      observers: [
+        '_paramsChanged(params.*)'
+      ],
+
+      get element() {
+        return this.$.layout.element;
+      },
+
+      _paramsChanged: function() {
+        if (this.element) {
+          this.element.params = this.params;
+        }
+      },
+
+      _aggregationsChanged: function () {
+        if (this.element) {
+          this.element.aggregations = this.aggregations;
+        }
+      },
+
+      _formHref: function (provider, searchName) {
+        var name = (searchName || provider).toLowerCase();
+        return this.resolveUrl(name + '/' + ['playing', name, 'search-form'].join('-') + '.html');
+      },
+
+      _formModel: function () {
+        return { provider: this.provider, params: this.params, aggregations: this.aggregations };
+      },
+
+      _formChanged: function (e) {
+        this.fire('search-form-layout-changed', e.detail);
+        // forward params change events
+        this.element.addEventListener('params-changed', function(e) {
+          this.notifyPath(e.detail.path || 'params', e.detail.value);
+        }.bind(this));
+      }
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,59 @@
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-layout.html">
+
+<!--
+`playing-search-results-layout`
+@group Playing UI
+@element playing-search-results-layout
+-->
+<dom-module id="playing-search-results-layout">
+  <template>
+
+    <mostly-layout id="results"
+            href="[[_resultsHref(searchName)]]"
+            model="[[_resultsModel(searchName,nxProvider)]]"
+            error="[[i18n('searchResults.layoutNotFound', searchName)]]"></mostly-layout>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-search-results-layout',
+
+      behaviors: [Mostly.I18nBehavior],
+
+      properties: {
+        /**
+         * The name of the search layout.
+         **/
+        searchName: String,
+        /**
+         * The `mostly-page-provider` instance used to perform the search.
+         **/
+        nxProvider: HTMLElement,
+        /**
+         * An object propagating key/values served by enclosing slot contents.
+         */
+        model: {
+          type: Object,
+          value: function() { return {}; }
+        }
+      },
+
+      get element() {
+        return this.$.results.element;
+      },
+
+      _resultsHref: function() {
+        var name = ['playing', this.searchName.toLowerCase(), 'search-results'].join('-');
+        return this.resolveUrl([this.searchName.toLowerCase(), name + '.html'].join('/'));
+      },
+
+      _resultsModel: function () {
+        return { nxProvider: this.nxProvider, name: this.searchName };
+      }
+
+    });
+  </script>
+
+</dom-module>
