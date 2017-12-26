@@ -53,7 +53,7 @@
       }
 
       mostly-data-list {
-        height: calc(100vh - 61px - var(--nuxeo-app-top));
+        height: calc(100vh - 61px - var(--mostly-app-top));
       }
 
       mostly-data-list {
@@ -63,7 +63,7 @@
 
       .filters {
         padding: 8px 16px;
-        height: calc(100vh - 61px - var(--nuxeo-app-top));
+        height: calc(100vh - 61px - var(--mostly-app-top));
         overflow: auto;
       }
 
@@ -79,8 +79,8 @@
       }
 
       .switch:hover {
-        background-color: var(--nuxeo-button-primary);
-        color: var(--nuxeo-button-primary-text);
+        background-color: var(--mostly-button-primary);
+        color: var(--mostly-button-primary-text);
       }
 
       mostly-select {
@@ -93,7 +93,7 @@
 
       paper-input {
         --paper-input-container-input: {
-          font-family: var(--nuxeo-app-font);
+          font-family: var(--mostly-app-font);
         };
 
         --paper-input-container-underline: {
@@ -105,14 +105,14 @@
         };
 
         --paper-input-container-label: {
-          font-family: var(--nuxeo-app-font);
+          font-family: var(--mostly-app-font);
         };
       }
 
       .content {
         @apply --layout-flex;
         @apply --layout-vertical;
-        height: calc(100vh - 61px - var(--nuxeo-app-top));
+        height: calc(100vh - 61px - var(--mostly-app-top));
         width: 293px;
       }
 
@@ -160,13 +160,13 @@
 
       .list-item {
         cursor: pointer;
-        color: var(--nuxeo-drawer-text);
+        color: var(--mostly-drawer-text);
         padding: 1em;
-        border-bottom: 1px solid var(--nuxeo-border);
+        border-bottom: 1px solid var(--mostly-border);
       }
 
       .list-item:hover {
-        @apply --nuxeo-block-hover;
+        @apply --mostly-block-hover;
       }
 
       .list-item-info {
@@ -177,7 +177,7 @@
       .list-item.selected,
       .list-item:focus,
       .list-item.selected:focus {
-        @apply(--nuxeo-block-selected);
+        @apply(--mostly-block-selected);
       }
 
       .list-item-property {
@@ -187,7 +187,7 @@
 
       mostly-quick-filters {
         padding: .5em .5em 0;
-        border-bottom: 1px solid var(--nuxeo-border);
+        border-bottom: 1px solid var(--mostly-border);
         max-height: 7em;
         overflow: auto;
         font-size: .8rem;
