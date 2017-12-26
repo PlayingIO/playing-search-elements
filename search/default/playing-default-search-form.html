@@ -5,6 +5,15 @@
 -->
 <dom-module id="playing-default-search-form">
   <template>
+    <style>
+      *[role=widget] {
+        margin-bottom: 16px;
+      }
+
+      label {
+        @apply --nuxeo-label;
+      }
+    </style>
 
     <mostly-input role="widget"
             id="searchInput"
@@ -17,14 +26,6 @@
     </mostly-input>
 
     <div role="widget">
-      <label>[[i18n('defaultSearch.creationDate')]]</label>
-      <mostly-checkbox-aggregation
-              data="[[aggregations.createdAt]]"
-              value="{{params.createdAt}}">
-      </mostly-checkbox-aggregation>
-    </div>
-
-    <div role="widget">
       <label>[[i18n('defaultSearch.modifiedDate')]]</label>
       <mostly-checkbox-aggregation
               data="[[aggregations.updatedAt]]"
@@ -34,7 +35,7 @@
 
     <div role="widget">
       <label>[[i18n('defaultSearch.authors')]]</label>
-      <mostly-select2
+      <mostly-selectivity
               path="users"
               operation="find"
               search-field="nickname"
@@ -43,12 +44,12 @@
               placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
               value="{{params.authors}}"
               multiple="true"
-              name="authors"></mostly-select2>
+              name="authors"></mostly-selectivity>
     </div>
 
     <div role="widget">
       <label>[[i18n('defaultSearch.collections')]]</label>
-      <mostly-select2
+      <mostly-selectivity
               path="collections"
               operation="find"
               search-field="title"
@@ -57,7 +58,7 @@
               placeholder="[[i18n('defaultSearch.collections.placeholder')]]"
               value="{{params.collections}}"
               multiple="true"
-              name="collections"></mostly-select2>
+              name="collections"></mostly-selectivity>
     </div>
 
     <div role="widget">
@@ -112,7 +113,7 @@
   <script>
     Polymer({
       is: 'playing-default-search-form',
-      behaviors: [Mostly.I18nBehavior],
+      behaviors: [Mostly.I18nBehavior, Mostly.RoutingBehavior, Mostly.LayoutBehavior],
       properties: {
         params: {
           type: Object,
@@ -128,6 +129,10 @@
           type: String,
           notify: true,
           observer: '_addFullTextSearch'
+        },
+        minChars: {
+          type: Number,
+          value: 3
         }
       },
 
@@ -136,13 +141,14 @@
       },
 
       _addFullTextSearch: function() {
-        if (this.searchTerm) {
+        if (this.searchTerm && this.searchTerm.length >= this.minChars) {
           this.set('params.searchTerm', this.searchTerm);
-        } else {
-          if (this.params.searchTerm) {
-            this.set('params.searchTerm', '');
-            delete this.params.searchTerm;
-          }
+          this.set('params.highlight',
+            'title.fulltext,binarytext,description.fulltext,tag,note.fulltext,file.name');
+        } else  if (this.params.searchTerm) {
+          this.set('params.searchTerm', '');
+          delete this.params.searchTerm;
+          delete this.params.highlight;
         }
       },
 

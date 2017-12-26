@@ -5,15 +5,27 @@
 -->
 <dom-module id="playing-default-search-results">
   <template>
+    <style include="mostly-styles">
+      mostly-data-table,
+      mostly-data-grid,
+      mostly-data-list {
+        display: block;
+        position: relative;
+        min-height: calc(100vh - 130px - var(--nuxeo-app-top));
+      }
+    </style>
 
     <mostly-results name="default" nx-provider="[[nxProvider]]" selected-items="{{selectedItems}}">
 
       <mostly-data-grid name="grid"
               icon="mostly:view-thumbnails"
-              class="results"
               empty-label="[[i18n('searchResults.noResults')]]"
               selection-enabled
-              display-quick-filters>
+              display-quick-filters
+              display-sort
+              sort-label="[[i18n('searchResults.sort.label')]]"
+              sort-options="[[sortOptions]]"
+              display-navigation>
         <template>
           <playing-document-grid-thumbnail
                   tabindex$="{{tabIndex}}"
@@ -25,7 +37,7 @@
         </template>
       </mostly-data-grid>
 
-      <mostly-data-table name="table" icon="mostly:view-list" class="results"
+      <mostly-data-table name="table" icon="mostly:view-list"
               settings-enabled
               empty-label="[[i18n('searchResults.noResults')]]"
               selection-enabled
@@ -35,7 +47,7 @@
         <mostly-data-table-column name="[[i18n('label.dublincore.title')]]" field="title" sort-by="title" flex="100">
           <template>
             <playing-document-thumbnail document="[[item]]"></playing-document-thumbnail>
-            <a class="ellipsis" href$="[[urlFor('browse', item.path)]]" on-tap="_navigate">[[item.title]]</a>
+            <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
           </template>
         </mostly-data-table-column>
 
@@ -53,7 +65,7 @@
 
         <mostly-data-table-column name="[[i18n('label.state')]]" field="currentLifeCycleState" hidden>
           <template>
-            <span class="capitalize">[[item.state]]</span>
+            <span class="capitalize">[[formatLifecycleState(item.state)]]</span>
           </template>
         </mostly-data-table-column>
 
@@ -96,6 +108,22 @@
         </mostly-data-table-column>
 
       </mostly-data-table>
+
+      <mostly-data-list name="list" icon="mostly:view-headline"
+              empty-label="[[emptyLabel]]"
+              multi-selection
+              empty-label-when-filtered="[[emptyLabelWhenFiltered]]"
+              selection-enabled
+              display-quick-filters
+              display-sort sort-label="[[i18n('searchResults.sort.label')]]"
+              sort-options="[[sortOptions]]"
+              display-navigation>
+        <template>
+          <playing-document-list-item selected$="{{selected}}" doc="[[item]]" index="[[index]]"
+                  on-navigate="_navigate" selected-items="[[selectedItems]]">
+          </playing-document-list-item>
+        </template>
+      </mostly-data-list>
     </mostly-results>
   </template>
 
@@ -104,11 +132,28 @@
       is: 'playing-default-search-results',
       behaviors: [Mostly.LayoutBehavior],
       properties: {
-        nxProvider: Object
+        nxProvider: Object,
+
+        sortOptions: {
+          type: Array,
+          value: []
+        }
+      },
+
+      attached: function() {
+        this.sortOptions = [
+          {field: 'title', label: this.i18n('searchResults.sort.field.title'), order: 'asc'},
+          {field: 'createdAt', label: this.i18n('searchResults.sort.field.createdAt'), order: 'asc', selected: true},
+          {field: 'modifiedAt', label: this.i18n('searchResults.sort.field.modifiedAt'), order: 'desc'},
+          {field: 'lastContributor', label: this.i18n('searchResults.sort.field.lastContributor'), order: 'asc'},
+          {field: 'state', label: this.i18n('searchResults.sort.field.state'), order: 'asc'},
+          {field: 'nature', label: this.i18n('searchResults.sort.field.nature'), order: 'asc'},
+          {field: 'coverage', label: this.i18n('searchResults.sort.field.coverage'), order: 'asc'}
+        ];
       },
 
       _navigate: function(e) {
-        this.fire('navigate', {doc: (e.model || e.detail).item});
+        this.fire('navigate', {doc: (e.model || e.detail).item, index: (e.model || e.detail).index});
       }
     });
   </script>

@@ -1,20 +1,24 @@
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../paper-tooltip/paper-tooltip.html">
-<link rel="import" href="../../mostly-elements/mostly-common/mostly-page-provider.html">
-<link rel="import" href="../../mostly-elements/mostly-layout.html">
+
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-routing-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-page-provider.html">
+<link rel="import" href="../../mostly-elements/mostly-layout.html">
 <link rel="import" href="../../mostly-elements/mostly-data-list/mostly-data-list.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-select.html">
 <link rel="import" href="../../playing-content-elements/playing-document-permissions/playing-document-permissions.html">
 <link rel="import" href="../../playing-content-elements/playing-document-thumbnail/playing-document-thumbnail.html">
 <link rel="import" href="../playing-search.html">
+<link rel="import" href="playing-search-form-layout.html">
 
 <!--
  `playing-search-form`
@@ -23,24 +27,25 @@
  -->
 <dom-module id="playing-search-form">
   <template>
-    <style>
+    <style include="mostly-styles iron-flex">
       :host {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
+        @apply --layout-vertical;
+        @apply --layout-flex;
         display: block;
       }
 
       .buttons {
-        @apply(--buttons-bar);
+        @apply --buttons-bar;
       }
 
       .actions {
-        @apply(--nx-actions);
+        @apply --layout-vertical;
+        @apply --nx-actions;
         padding: 0 1rem;
       }
 
       .actions paper-button {
-        @apply(--nx-actions-button);
+        @apply --nx-actions-button;
       }
 
       .actions .reset {
@@ -48,7 +53,7 @@
       }
 
       mostly-data-list {
-        height: calc(100vh - 61px);
+        height: calc(100vh - 61px - var(--nuxeo-app-top));
       }
 
       mostly-data-list {
@@ -57,8 +62,8 @@
       }
 
       .filters {
-        padding: 1em 0;
-        height: calc(100vh - 61px);
+        padding: 8px 16px;
+        height: calc(100vh - 61px - var(--nuxeo-app-top));
         overflow: auto;
       }
 
@@ -82,11 +87,11 @@
         margin-right: 56px;
       }
 
-      ::content .unfocused-line.paper-input-container {
+      .unfocused-line.paper-input-container {
         background-color: transparent;
       }
 
-      ::content paper-input {
+      paper-input {
         --paper-input-container-input: {
           font-family: var(--nuxeo-app-font);
         };
@@ -105,17 +110,17 @@
       }
 
       .content {
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
-        height: calc(100vh - 61px);
+        @apply --layout-flex;
+        @apply --layout-vertical;
+        height: calc(100vh - 61px - var(--nuxeo-app-top));
         width: 293px;
       }
 
       .header {
         height: 53px;
         box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1) inset;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
       }
 
       .header h1 {
@@ -125,7 +130,7 @@
       }
 
       .header h1,
-      .header ::content .input-content.paper-input-container input {
+      .header .input-content.paper-input-container input {
         text-transform: uppercase;
       }
 
@@ -142,17 +147,11 @@
         white-space: nowrap;
       }
 
-      paper-dialog {
-        --paper-dialog: {
-          min-width: 360px;
-        };
-      }
-
-      :host[loading] .loadable {
+      :host([loading]) .loadable {
         opacity: 0.25;
       }
 
-      :host[loading] paper-spinner-lite {
+      paper-spinner-lite {
         position: absolute;
         top: 45%;
         left: 50%;
@@ -167,7 +166,12 @@
       }
 
       .list-item:hover {
-        @apply(--nuxeo-block-hover);
+        @apply --nuxeo-block-hover;
+      }
+
+      .list-item-info {
+        @apply --layout-horizontal;
+        @apply --layout-center;
       }
 
       .list-item.selected,
@@ -181,7 +185,7 @@
         margin-right: .2em;
       }
 
-      ::content mostly-quick-filters {
+      mostly-quick-filters {
         padding: .5em .5em 0;
         border-bottom: 1px solid var(--nuxeo-border);
         max-height: 7em;
@@ -189,24 +193,16 @@
         font-size: .8rem;
       }
 
-      ::content #checkbox.paper-checkbox {
+      #checkbox.paper-checkbox {
         border: 1px solid;
-      }
-
-      ::content *[role=widget] {
-        @apply(--layout-vertical);
-        box-sizing: border-box;
-        margin-bottom: 1rem;
-        padding: 0 1rem;
-        width: 100%;
       }
     </style>
 
-    <mostly-page-provider id="provider" auto$="[[_isAuto(auto, visible)]]"
+    <mostly-page-provider id="provider"
             provider="[[provider]]"
             page-size="[[pageSize]]"
             aggregations="{{aggregations}}"
-            enrichers="thumbnail, permissions"
+            enrichers="thumbnail, permissions, highlight"
             params="[[params]]"
             quick-filters="{{quickFilters}}"
             schemas="[[schemas]]"
@@ -247,16 +243,17 @@
 
       <div class="content">
         <div id="filters" class="filters loadable" hidden$="{{queue}}">
-          <mostly-layout id="layout"
-                  href="[[_formHref(provider, searchName)]]"
-                  model="[[_formModel(provider, aggregations, params)]]"
-                  error="[[i18n('documentSearchForm.layoutNotFound', searchName)]]"
-                  on-element-changed="_formChanged"></mostly-layout>
+          <playing-search-form-layout id="layout"
+                  provider="[[provider]]"
+                  search-name="[[searchName]]"
+                  aggregations="[[aggregations]]"
+                  params="{{params}}"
+                  on-search-form-layout-changed="_formChanged"></playing-search-form-layout>
           <div class="layout vertical row" hidden$="[[!displayAutoControl]]">
             <paper-toggle-button checked="{{auto}}">[[i18n('searchForm.auto')]]</paper-toggle-button>
             <paper-tooltip>[[i18n('searchForm.auto.description')]]</paper-tooltip>
           </div>
-          <div class="actions layout vertical">
+          <div class="actions">
             <paper-button noink class="reset" disabled$="[[!dirty]]" on-tap="_reset" hidden$="[[!_isSavedSearch(selectedSearchIdx)]]">
               [[i18n('command.Reset')]]
             </paper-button>
@@ -269,7 +266,7 @@
               </paper-button>
             </div>
           </div>
-          <paper-spinner-lite active hidden$="[[!loading]]"></paper-spinner-lite>
+          <paper-spinner-lite active$="[[!loading]]"></paper-spinner-lite>
         </div>
 
         <div id="queue" hidden$="{{!queue}}">
@@ -278,11 +275,12 @@
                   empty-label="[[i18n('searchForm.queue.noResults')]]"
                   empty-label-when-filtered=""
                   selection-enabled
+                  select-on-tap
                   display-quick-filters>
             <template>
               <div tabindex$="{{tabIndex}}" class$="[[_computedClass(selected)]]">
-                <div class="list-item-box vertical layout">
-                  <div class="list-item-info horizontal layout center">
+                <div class="list-item-box">
+                  <div class="list-item-info">
                     <div class="vertical layout center">
                       <playing-document-thumbnail document="[[item]]"></playing-document-thumbnail>
                     </div>
@@ -463,8 +461,7 @@
          * The aggregations returned by `provider`.
          **/
         aggregations: {
-          type: Object,
-          observer: '_aggregationsChanged'
+          type: Object
         },
         /**
          * If `true`, the current element is visible.
@@ -483,13 +480,34 @@
         displayAutoControl: {
           type: Boolean,
           value: false
-        }
+        },
+        /**
+         * Currently selected view in search results
+         */
+        view: Object
       },
 
       observers: [
         '_resetResults(provider, params.*, quickFilters.*, query)',
-        '_paramsChanged(params.*)'
+        '_paramsChanged(params.*)',
+        '_visibleChanged(auto, visible)'
       ],
+
+      _visibleChanged: function() {
+        if (this.visible) {
+          if (!this.searches) {
+            this.$['saved-searches'].get();
+            if (this.form.params !== undefined) {
+              this.params = this.form.params;
+            }
+          }
+          if (this.queue) {
+            this.$.list.fetch();
+          } else if (this.auto) {
+            this.$.provider.fetch();
+          }
+        }
+      },
 
       ready: function() {
         var body = document.querySelector('body');
@@ -497,6 +515,10 @@
         body.appendChild(this.$.renameDialog);
         body.appendChild(this.$.shareDialog);
         body.appendChild(this.$.deleteDialog);
+
+        document.addEventListener('search-results-view', (e) => {
+          this.view = e.detail.view;
+        });
       },
 
       get nxProvider() {
@@ -508,35 +530,25 @@
       },
 
       displayQueueAndNavigateToFirst: function() {
-        if (this.$.list.$.list.items && this.$.list.$.list.items.length > 0) {
-          this.displayQueue(this.$.list.$.list.items[0]);
-        } else {
-          this.displayQueue();
-        }
+        this.displayQueue(0);
       },
 
-      displayQueue: function(doc) {
-        var doDisplay = () => {
-          this.queue = true;
-          this.$.list.notifyResize();
-          if (doc && doc.id) {
-            this.$.list.$.list.selectItem(doc);
-            this.$.list.$.list.scrollToItem(doc);
-          }
-        };
-        if (!this.auto) {
-          this.$.provider.fetch().then(doDisplay);
-        } else {
-          doDisplay();
+      displayQueue: function(index) {
+        this.queue = true;
+        if (this.visible) {
+          this.$.list.fetch().then(() => {
+            if (typeof index === 'number') {
+              this.$.list.scrollToIndex(index);
+              this.$.list.selectIndex(index);
+            }
+          });
         }
-      },
-
-      _isAuto: function() {
-        return this.visible && this.auto;
       },
 
       _resetResults: function() {
-        this.$.list._resetResults();
+        if (this.provider && this.params && this.quickFilters && this.query) {
+          this.$.list._resetResults();
+        }
       },
 
       _displayFiltersTapped: function() {
@@ -561,17 +573,18 @@
         return classes;
       },
 
-      _selectedDocChanged: function(doc) {
-        if (doc) {
-          this.navigateTo('browse',  doc.path);
+      _selectedDocChanged: function(doc, old) {
+        if ((doc && doc.path && !old) || (doc && doc.path && old && old.path && doc.path !== old.path)) {
+          this.navigateTo('browse', doc.path);
         }
       },
 
       _paramsChanged: function() {
         this.$.provider.page = 1;
         this.dirty = true;
-        if (this.form) {
-          this.form.params = this.params;
+        if (this.view && this.auto && this.visible) {
+          this.view.reset();
+          this.view.fetch();
         }
       },
 
@@ -594,6 +607,7 @@
             this.searchTerm = this.params.ecm_fulltext.replace('*', '');
             this.form.searchTerm = this.searchTerm;
           }
+          this.$.provider.fetch();
         }
       },
 
@@ -604,7 +618,7 @@
       _clear: function() {
         this.searchTerm = '';
         this.isSavedSearch = false;
-        this.selectedSearch = {};
+        this.selectedSearch = null;
         if (this.form && this.form.clear != undefined && typeof this.form.clear == 'function') {
           this.form.clear();
         }
@@ -620,8 +634,13 @@
       },
 
       _search: function() {
-        this.$.provider.page = 1;
-        return this.$.provider.fetch().then(this._navigateToResults.bind(this));
+        if (this.view) {
+          this.view.reset();
+          return this.view.fetch().then(this._navigateToResults.bind(this));
+        } else if (this.visible) {
+          // if the view is not initialized yet, navigating to the search will trigger a search and display the results
+          this.navigateTo('search', this.searchName);
+        }
       },
 
       _reset: function() {
@@ -676,7 +695,7 @@
             'type': 'savedSearch',
             'pageProvider': this.provider,
             'params': this.params,
-            'title': this.$$('#savedSearchTitle').value
+            'title': this.$.savedSearchTitle.value
           };
           _el.post().then((response) => {
             this.$.saveDialog.close();
@@ -733,25 +752,6 @@
         return {pageProvider: this.provider};
       },
 
-      _aggregationsChanged: function() {
-        if (this.form) {
-          this.form.aggregations = this.aggregations;
-        }
-      },
-
-      _formHref: function (provider, searchName) {
-        var name = (searchName || provider).toLowerCase();
-        return this.resolveUrl(name + '/' + ['playing', name, 'search-form'].join('-') + '.html');
-      },
-
-      _formModel: function () {
-        return {
-          provider: this.provider,
-          params: this.params,
-          aggregations: this.aggregations
-        };
-      },
-
       _formChanged: function() {
         this._clear();
 
@@ -761,10 +761,6 @@
           this.displayFilters();
         }
 
-        this.$['saved-searches'].get();
-        if (this.form.params !== undefined) {
-          this.params = this.form.params;
-        }
         // setup data binding
         this.form.addEventListener('params-changed', (e) => {
           // e.detail.path is params.prop_name eg: params.ecm_fulltext

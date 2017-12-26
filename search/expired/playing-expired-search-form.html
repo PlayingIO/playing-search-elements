@@ -5,6 +5,15 @@
 -->
 <dom-module id="playing-expired-search-form">
   <template>
+    <style>
+      *[role=widget] {
+        margin-bottom: 16px;
+      }
+
+      label {
+        @apply --nuxeo-label;
+      }
+    </style>
 
     <mostly-input role="widget"
             id="searchInput"
@@ -50,17 +59,19 @@
           type: String,
           notify: true,
           observer: '_addFullTextSearch'
+        },
+        minChars: {
+          type: Number,
+          value: 3
         }
       },
 
       _addFullTextSearch: function() {
-        if (this.searchTerm) {
+        if (this.searchTerm && this.searchTerm.length >= this.minChars) {
           this.set('params.title', this.searchTerm);
-        } else {
-          if (this.params.title) {
-            this.set('params.title', '');
-            delete this.params.title;
-          }
+        } else if (this.params.title) {
+          this.set('params.title', '');
+          delete this.params.title;
         }
       },
 

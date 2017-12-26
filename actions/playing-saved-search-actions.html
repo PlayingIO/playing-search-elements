@@ -1,10 +1,12 @@
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-item/paper-item.html">
-<link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-listbox/paper-listbox.html">
 <link rel="import" href="../../paper-menu-button/paper-menu-button.html">
+
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
 <link rel="import" href="../../playing-content-elements/playing-document/playing-document.html">
@@ -17,30 +19,35 @@
 <dom-module id="playing-saved-search-actions">
   <template>
 
-    <style>
+    <style include="iron-flex">
       paper-item {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         cursor: pointer;
       }
+
       iron-icon {
         margin-right: 16px;
+      }
+
+      paper-menu-button[hidden] {
+        display: none !important;
       }
     </style>
 
     <playing-document auto doc-id="[[searchId]]" enrichers="permissions" response="{{searchDoc}}"></playing-document>
 
     <div class="horizontal layout center">
-      <paper-button on-tap="_saveSearchAs" hidden$="[[!_showSaveAs(searchDoc, isSavedSearch, searchForm.dirty)]]">
+      <paper-button on-tap="_saveSearchAs" hidden$="[[!_showSaveAs(searchDoc, isSavedSearch, _dirty)]]">
         <iron-icon icon="mostly:filter-edit"></iron-icon>[[i18n('app.saveNewSearch')]]
       </paper-button>
-      <paper-button on-tap="_saveSearch" hidden$="[[!_showSave(searchDoc, isSavedSearch, searchFrom.dirty)]]">
+      <paper-button on-tap="_saveSearch" hidden$="[[!_showSave(searchDoc, isSavedSearch, _dirty)]]">
         <iron-icon icon="mostly:filter-add"></iron-icon>[[i18n('app.savedSearch')]]
       </paper-button>
       <paper-menu-button no-animations horizontal-align="right" vertical-offset="40"
-                         hidden$="[[!_showOtherSearchActions(searchDoc, isSavedSearch, searchForm.dirty)]]">
-        <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="menu"></paper-icon-button>
-        <paper-menu class="dropdown-content layout vertical">
+                         hidden$="[[!_showOtherSearchActions(searchDoc, isSavedSearch, _dirty)]]">
+        <paper-icon-button icon="icons:more-vert" slot="dropdown-trigger" alt="menu"></paper-icon-button>
+        <paper-listbox slot="dropdown-content layout vertical">
           <paper-item on-tap="_renameSearch">
             <iron-icon icon="mostly:edit"></iron-icon>[[i18n('app.renameSearch')]]
           </paper-item>
@@ -50,7 +57,7 @@
           <paper-item on-tap="_deleteSearch">
             <iron-icon icon="mostly:delete"></iron-icon>[[i18n('app.deleteSearch')]]
           </paper-item>
-        </paper-menu>
+        </paper-listbox>
       </paper-menu-button>
     </div>
 
@@ -62,17 +69,29 @@
       properties: {
         searchId: String,
         searchDoc: Object,
-        searchForm: Object
+        searchForm: {
+          type: Object,
+          observer: '_searchFormChanged'
+        },
+        _dirty: Boolean
       },
 
-      set searchForm(form) {
-        this.searchForm = form;
-        this.searchId = this._searchForm.selectedSearch.id;
-        this.isSavedSearch = !!this.searchId; //this._searchForm.isSavedSearch;
-      },
+      _searchFormChanged: function() {
+        this._dirty = this.searchForm && this.searchForm.dirty;
+        if (this.searchForm) {
+          this.searchForm.addEventListener('dirty-changed', () => {
+            this._dirty = this.searchForm.dirty;
+          });
+          this.searchForm.addEventListener('selected-search-changed', () => {
+            this.searchId = this.searchForm.selectedSearch.id;
+            this.isSavedSearch = !!this.searchId;
+          });
 
-      get searchForm() {
-        return this._searchForm;
+          if (this.searchForm.selectedSearch) {
+            this.searchId = this.searchForm.selectedSearch.id;
+          }
+        }
+        this.isSavedSearch = !!this.searchId;
       },
 
       _saveSearch: function() {
