@@ -11,7 +11,7 @@
 -->
 <dom-module id="playing-results-view">
   <template>
-    <style include="mostly-styles">
+    <style include="mostly-styles iron-flex iron-flex-alignment">
       .ellipsis {
         text-overflow: ellipsis;
         overflow: hidden;
@@ -113,11 +113,13 @@
         </div>
       </div>
     </template>
-    <playing-search-results-layout id="results"
-            search-name="[[searchName]]"
-            nx-provider="[[_nxProvider]]"
-            on-navigate="_navigateFromSearch"></playing-search-results-layout>
-
+    
+    <template is="dom-if" if="[[visible]]">
+      <playing-search-results-layout id="results"
+              search-name="[[searchName]]"
+              nx-provider="[[_nxProvider]]"
+              on-navigate="_navigateFromSearch"></playing-search-results-layout>
+    </template>
   </template>
 
   <script>
