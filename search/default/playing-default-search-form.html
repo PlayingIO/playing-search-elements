@@ -143,12 +143,13 @@
       _addFullTextSearch: function() {
         if (this.searchTerm && this.searchTerm.length >= this.minChars) {
           this.set('params.searchTerm', this.searchTerm);
-          this.set('params.highlight',
-            'title.fulltext,binarytext,description.fulltext,tag,note.fulltext,file.name');
-        } else  if (this.params.searchTerm) {
+          this.set('params.highlight', 'title,content,description,tag,file.name');
+          this.set('params.$select', 'creator.*,*');
+        } else if (this.params.searchTerm) {
           this.set('params.searchTerm', '');
           delete this.params.searchTerm;
           delete this.params.highlight;
+          delete this.params.$select;
         }
       },
 

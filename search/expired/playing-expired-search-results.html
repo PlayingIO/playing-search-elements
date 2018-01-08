@@ -59,7 +59,13 @@
           </template>
         </mostly-data-table-column>
 
-        <mostly-data-table-column name="[[i18n('label.dublincore.lastContributor')]]" field="lastContributor" sort-by="lastContributor" flex="50">
+        <mostly-data-table-column name="[[i18n('label.dublincore.creator')]]" field="creator" sort-by="creator" flex="50">
+          <template>
+            <playing-user-tag user="[[item.creator]]"></playing-user-tag>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.lastContributor')]]" field="lastContributor" sort-by="lastContributor" hidden>
           <template>
             <playing-user-tag user="[[item.lastContributor]]"></playing-user-tag>
           </template>
@@ -80,12 +86,6 @@
         <mostly-data-table-column name="[[i18n('label.dublincore.createdAt')]]" field="createdAt" sort-by="createdAt" flex="50" hidden>
           <template>
             <mostly-date datetime="[[item.createdAt]]"></mostly-date>
-          </template>
-        </mostly-data-table-column>
-
-        <mostly-data-table-column name="[[i18n('label.dublincore.creator')]]" field="creator" sort-by="creator" hidden>
-          <template>
-            <playing-user-tag user="[[item.creator]]"></playing-user-tag>
           </template>
         </mostly-data-table-column>
 
