@@ -37,7 +37,7 @@
   <script>
     Polymer({
       is: 'playing-expired-search-form',
-      behaviors: [Mostly.I18nBehavior],
+      behaviors: [Mostly.LayoutBehavior, Mostly.I18nBehavior],
       properties: {
         params: {
           type: Object,
@@ -68,7 +68,7 @@
 
       _addFullTextSearch: function() {
         if (this.searchTerm && this.searchTerm.length >= this.minChars) {
-          this.set('params.title', this.searchTerm);
+          this.set('params.title', this.formatFulltext(this.searchTerm));
         } else if (this.params.title) {
           this.set('params.title', '');
           delete this.params.title;
