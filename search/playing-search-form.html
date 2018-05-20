@@ -211,11 +211,11 @@
             on-error="_onError">
     </mostly-page-provider>
 
-    <playing-search id="saved-search"></playing-search>
+    <playing-search id="savedSearch"></playing-search>
 
     <div id="search-container">
       <div class="header ellipsis search-header">
-        <playing-search id="saved-searches"
+        <playing-search id="savedSearches"
                 searches="{{searches}}"
                 params="[[_computeSavedSearchesParams(provider)]]"></playing-search>
         <template is="dom-if" if="[[!onlyQueue]]">
@@ -496,7 +496,7 @@
       _visibleChanged: function() {
         if (this.visible) {
           if (!this.searches) {
-            this.$['saved-searches'].get();
+            this.$['savedSearches'].get();
             if (this.form.params !== undefined) {
               this.params = this.form.params;
             }
@@ -644,7 +644,7 @@
       },
 
       _reset: function() {
-        var _el = this.$['saved-search'];
+        var _el = this.$['savedSearch'];
         _el.searchId = this.selectedSearch.id;
         _el.get().then((response) => {
           this.params = this._mutateParams(response.params);
@@ -687,12 +687,12 @@
       },
 
       _saveSearch: function() {
-        var _el = this.$['saved-search'];
+        var _el = this.$['savedSearch'];
         // save a new search
         if (this.selectedSearchIdx === 0 || this._saveAs) {
           _el.searchId = '';
           _el.data = {
-            'type': 'savedSearch',
+            'type': 'saved-searches',
             'pageProvider': this.provider,
             'params': this.params,
             'title': this.$.savedSearchTitle.value
@@ -700,7 +700,7 @@
           _el.post().then((response) => {
             this.$.saveDialog.close();
             this.selectedSearch = response;
-            this.$['saved-searches'].get().then(() => {
+            this.$['savedSearches'].get().then(() => {
               this.selectedSearchIdx = this.searches.length;
             });
           });
@@ -732,11 +732,11 @@
       },
 
       _deleteSearch: function() {
-        var _el = this.$['saved-search'];
+        var _el = this.$['savedSearch'];
         _el.searchId = this.selectedSearch.id;
         _el.remove().then(() => {
           this.$.deleteDialog.close();
-          this.$['saved-searches'].get().then(() => {
+          this.$['savedSearches'].get().then(() => {
             // hack required to update the paper-input inside the paper-dropdown-menu
             this.selectedSearchIdx = 0;
             this.selectedSearchIdx = this.searches.length;
