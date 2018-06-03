@@ -1,7 +1,7 @@
 Playing Content Search Components
 =================================
 
-Content search management web components for playful applications.
+Content search management web components for building playful applications.
 
 # Usage
 
