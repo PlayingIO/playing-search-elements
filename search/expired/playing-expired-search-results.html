@@ -91,20 +91,20 @@
 
         <mostly-data-table-column name="[[i18n('label.dublincore.nature')]]" field="nature" hidden>
           <template>
-            <mostly-tag hidden$="[[!item.nature]]">[[formatDirectory(item.nature)]]</mostly-tag>
+            <mostly-tag hidden$="[[!item.nature]]">[[formatVocabulary(item.nature)]]</mostly-tag>
           </template>
         </mostly-data-table-column>
 
         <mostly-data-table-column name="[[i18n('label.dublincore.coverage')]]" field="coverage" hidden>
           <template>
-            <mostly-tag hidden$="[[!item.coverage]]">[[formatDirectory(item.coverage)]]</mostly-tag>
+            <mostly-tag hidden$="[[!item.coverage]]">[[formatVocabulary(item.coverage)]]</mostly-tag>
           </template>
         </mostly-data-table-column>
 
         <mostly-data-table-column name="[[i18n('label.dublincore.subjects')]]" field="subjects" hidden flex="60">
           <template>
             <template is="dom-repeat" items="[[item.subjects]]" as="subject">
-              <mostly-tag>[[formatDirectory(subject)]]</mostly-tag>
+              <mostly-tag>[[formatVocabulary(subject)]]</mostly-tag>
             </template>
           </template>
         </mostly-data-table-column>
