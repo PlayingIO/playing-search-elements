@@ -1,0 +1,168 @@
+<!--
+`playing-trash-search-results`
+@group Playing UI
+@element playing-trash-search-results
+-->
+<dom-module id="playing-trash-search-results">
+  <template>
+    <style include="mostly-styles playing-styles">
+      mostly-data-table,
+      mostly-data-grid,
+      mostly-data-list {
+        display: block;
+        position: relative;
+        min-height: calc(100vh - 130px - var(--mostly-app-top));
+      }
+    </style>
+
+    <mostly-results name="default"
+            nx-provider="[[nxProvider]]"
+            selected-items="{{selectedItems}}"
+            display-mode="list">
+
+      <mostly-data-grid name="grid" icon="mostly:view-thumbnails"
+              empty-label="[[i18n('searchResults.noResults')]]" selection-enabled display-quick-filters
+              display-sort sort-label="[[i18n('searchResults.sort.label')]]" sort-options="[[sortOptions]]"
+              display-navigation>
+        <template>
+          <playing-document-grid-thumbnail tabindex$="{{tabIndex}}" selected$="{{selected}}" doc="[[item]]" index="[[index]]"
+                                         on-navigate="_navigate" selected-items="[[selectedItems]]">
+          </playing-document-grid-thumbnail>
+        </template>
+      </mostly-data-grid>
+
+      <mostly-data-table name="table" icon="mostly:view-list"
+              settings-enabled
+              empty-label="[[i18n('searchResults.noResults')]]"
+              selection-enabled
+              display-quick-filters
+              on-row-clicked="_navigate">
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.title')]]" field="dc:title" sort-by="dc:title" flex="30">
+          <template>
+            <playing-document-thumbnail document="[[item]]"></playing-document-thumbnail>
+            <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.updatedAt')]]" field="updatedAt" sort-by="updatedAt" flex="50">
+          <template>
+            <mostly-date datetime="[[item.updatedAt]]"></mostly-date>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.lastContributor')]]" field="lastContributor" sort-by="lastContributor" flex="50" hidden>
+          <template>
+            <playing-user-tag user="[[item.lastContributor]]"></playing-user-tag>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.state')]]" field="currentLifeCycleState" hidden>
+          <template>
+            <span class="capitalize">[[formatLifecycleState(item.state)]]</span>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.version')]]" field="versionLabel" hidden>
+          <template>
+            [[formatVersion(item)]]
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.created')]]" field="createdAt" sort-by="createdAt" flex="50" hidden>
+          <template>
+            <mostly-date datetime="[[item.createdAt]]"></mostly-date>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.author')]]" field="creator" sort-by="creator" flex="20">
+          <template>
+            <playing-user-tag user="[[item.creator]]"></playing-user-tag>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.nature')]]" field="nature" hidden>
+          <template>
+            <mostly-tag hidden$="[[!item.nature]]">[[formatDirectory(item.nature)]]</mostly-tag>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.coverage')]]" field="coverage" hidden>
+          <template>
+            <mostly-tag hidden$="[[!item.coverage]]">[[formatDirectory(item.coverage)]]</mostly-tag>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.dublincore.subjects')]]" field="subjects" hidden flex="60">
+          <template>
+            <template is="dom-repeat" items="[[item.subjects]]" as="subject">
+              <mostly-tag>[[formatDirectory(subject)]]</mostly-tag>
+            </template>
+          </template>
+        </mostly-data-table-column>
+
+        <mostly-data-table-column name="[[i18n('label.path')]]" field="path" flex="100">
+          <template>
+            <span>[[item.path]]</span>
+          </template>
+        </mostly-data-table-column>
+
+      </mostly-data-table>
+
+      <mostly-data-list name="list" icon="mostly:view-headline"
+              empty-label="[[emptyLabel]]"
+              multi-selection
+              empty-label-when-filtered="[[emptyLabelWhenFiltered]]"
+              selection-enabled
+              display-quick-filters
+              display-sort
+              sort-label="[[i18n('searchResults.sort.label')]]"
+              sort-options="[[sortOptions]]"
+              display-navigation>
+        <template>
+          <playing-document-list-item
+                  selected$="{{selected}}"
+                  doc="[[item]]"
+                  index="[[index]]"
+                  on-navigate="_navigate"
+                  selected-items="[[selectedItems]]"></playing-document-list-item>
+        </template>
+      </mostly-data-list>
+
+    </mostly-results>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-trash-search-results',
+
+      behaviors: [Mostly.LayoutBehavior],
+
+      properties: {
+        nxProvider: Object,
+
+        sortOptions: {
+          type: Array,
+          value: []
+        }
+      },
+
+      attached: function() {
+        this.sortOptions = [
+          { field: 'title', label: this.i18n('searchResults.sort.field.title'), order: 'asc' },
+          { field: 'createdAt', label: this.i18n('searchResults.sort.field.created'), order: 'asc', selected: true },
+          { field: 'updatedAt', label: this.i18n('searchResults.sort.field.updatedAt'), order: 'desc' },
+          { field: 'lastContributor', label: this.i18n('searchResults.sort.field.lastContributor'), order: 'asc' },
+          { field: 'state', label: this.i18n('searchResults.sort.field.state'), order: 'asc' },
+          { field: 'nature', label: this.i18n('searchResults.sort.field.nature'), order: 'asc' },
+          { field: 'coverage', label: this.i18n('searchResults.sort.field.coverage'), order: 'asc' }
+        ];
+      },
+
+      _navigate: function(e) {
+        this.fire('navigate', { doc: (e.model || e.detail).item, index: (e.model || e.detail).index });
+      }
+    });
+  </script>
+
+</dom-module>
