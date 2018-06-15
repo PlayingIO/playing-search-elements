@@ -39,7 +39,9 @@
         </template>
       </mostly-data-grid>
 
-      <mostly-data-table name="table" icon="mostly:view-list" class="results"
+      <mostly-data-table name="table"
+              icon="mostly:view-list"
+              class="results"
               settings-enabled
               empty-label="[[i18n('searchResults.noResults')]]"
               selection-enabled
@@ -116,7 +118,9 @@
   <script>
     Polymer({
       is: 'playing-expired-search-results',
+
       behaviors: [Mostly.LayoutBehavior],
+
       properties: {
         nxProvider: Object,
         sortOptions: {
@@ -127,14 +131,14 @@
 
       attached: function() {
         this.sortOptions = [
-          {field: 'title', label: this.i18n('searchResults.sort.field.title'), order: 'asc'},
-          {field: 'createdAt', label: this.i18n('searchResults.sort.field.createdAt'), order: 'asc'},
-          {field: 'updatedAt', label: this.i18n('searchResults.sort.field.updatedAt'), order: 'desc'},
-          {field: 'expiredAt', label: this.i18n('searchResults.sort.field.expiredAt'), order: 'asc', selected: true},
-          {field: 'lastContributor', label: this.i18n('searchResults.sort.field.lastContributor'), order: 'asc'},
-          {field: 'state', label: this.i18n('searchResults.sort.field.state'), order: 'asc'},
-          {field: 'nature', label: this.i18n('searchResults.sort.field.nature'), order: 'asc'},
-          {field: 'coverage', label: this.i18n('searchResults.sort.field.coverage'), order: 'asc'}
+          { field: 'title', label: this.i18n('searchResults.sort.field.title'), order: 'asc' },
+          { field: 'createdAt', label: this.i18n('searchResults.sort.field.createdAt'), order: 'asc' },
+          { field: 'updatedAt', label: this.i18n('searchResults.sort.field.updatedAt'), order: 'desc' },
+          { field: 'expiredAt', label: this.i18n('searchResults.sort.field.expiredAt'), order: 'asc', selected: true },
+          { field: 'lastContributor', label: this.i18n('searchResults.sort.field.lastContributor'), order: 'asc' },
+          { field: 'state', label: this.i18n('searchResults.sort.field.state'), order: 'asc' },
+          { field: 'nature', label: this.i18n('searchResults.sort.field.nature'), order: 'asc' },
+          { field: 'coverage', label: this.i18n('searchResults.sort.field.coverage'), order: 'asc' }
         ];
       },
 

@@ -21,7 +21,8 @@
 
     <div role="widget">
       <label>[[i18n('defaultSearch.authors')]]</label>
-      <mostly-dropdown-aggregation placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
+      <mostly-dropdown-aggregation
+              placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
               data="[[aggregations.authors]]"
               value="{{params.authors}}"
               multiple="true">
@@ -33,7 +34,9 @@
   <script>
     Polymer({
       is: 'playing-expired-search-form',
+
       behaviors: [Mostly.LayoutBehavior, Mostly.I18nBehavior],
+
       properties: {
         params: {
           type: Object,
@@ -46,16 +49,19 @@
           },
           notify: true
         },
+
         aggregations: {
           type: Object,
           value: {},
           notify: true
         },
+
         searchTerm: {
           type: String,
           notify: true,
           observer: '_addFullTextSearch'
         },
+
         minChars: {
           type: Number,
           value: 3
