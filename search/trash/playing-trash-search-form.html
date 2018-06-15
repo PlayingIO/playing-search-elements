@@ -93,6 +93,7 @@
         if (this.searchTerm && this.searchTerm.length >= this.minChars) {
           this.set('params.searchTerm', this.formatFulltext(this.searchTerm) + '*');
           this.set('params.highlight', 'title,description,tag,content');
+          this.set('params.$select', 'creator,*');
         } else if (this.params.searchTerm) {
           this.set('params.searchTerm', '');
           delete this.params.searchTerm;
