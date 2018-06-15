@@ -25,4 +25,14 @@
   </template>
 </mostly-slot-content>
 
-
+<mostly-slot-content name="trashMenuButton" slot="DRAWER_ITEMS" order="100">
+  <template>
+    <mostly-menu-icon name="trash" icon="mostly:delete" label="app.trashSearch"></mostly-menu-icon>
+  </template>
+</mostly-slot-content>
+<mostly-slot-content name="trashMenuPage" slot="DRAWER_PAGES">
+  <template>
+    <playing-search-form name="trash" search-name="trash" auto
+            provider="trash-searches" schemas="*"></playing-search-form>
+  </template>
+</mostly-slot-content>
