@@ -1,0 +1,117 @@
+<!--
+`playing-trash-search-form`
+@group Playing UI
+@element playing-trash-search-form
+-->
+<dom-module id="playing-trash-search-form">
+  <template>
+    <style>
+      *[role=widget] {
+        margin-bottom: 16px;
+      }
+
+      label {
+        @apply --mostly-label;
+      }
+    </style>
+
+    <mostly-input role="widget"
+                 id="searchInput"
+                 type="search"
+                 label="[[i18n('defaultSearch.fullText')]]"
+                 value="{{searchTerm}}"
+                 placeholder="[[i18n('defaultSearch.fullText.placeholder')]]"
+                 autofocus
+                 on-keydown="_checkForEnter">
+    </mostly-input>
+
+    <playing-path-suggestion value="{{_path}}" label="[[i18n('defaultSearch.path')]]" role="widget"></playing-path-suggestion>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.authors')]]</label>
+      <mostly-dropdown-aggregation placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
+        data="[[aggregations.dc_creator_agg]]"
+        value="{{params.dc_creator_agg}}"
+        multiple="true"
+        name="authors">
+      </mostly-dropdown-aggregation>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('defaultSearch.size')]]</label>
+      <mostly-checkbox-aggregation
+        data="[[aggregations.common_size_agg]]"
+        value="{{params.common_size_agg}}"
+        name="size">
+      </mostly-checkbox-aggregation>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-trash-search-form',
+
+      behaviors: [Mostly.LayoutBehavior, Mostly.I18nBehavior],
+
+      properties: {
+        params: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+
+        aggregations: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+
+        searchTerm: {
+          type: String,
+          notify: true,
+          observer: '_addFullTextSearch'
+        },
+
+        minChars: {
+          type: Number,
+          value: 3
+        },
+
+        _path: {
+          type: String,
+          value: '/',
+          observer: '_addPathSearch'
+        }
+      },
+
+      clear: function() {
+        this.searchTerm = '';
+        this._path = '/';
+      },
+
+      _addFullTextSearch: function() {
+        if (this.searchTerm && this.searchTerm.length >= this.minChars) {
+          this.set('params.searchTerm', this.formatFulltext(this.searchTerm) + '*');
+          this.set('params.highlight', 'title,description,tag,content');
+        } else if (this.params.searchTerm) {
+          this.set('params.searchTerm', '');
+          delete this.params.searchTerm;
+          delete this.params.highlight;
+        }
+      },
+
+      _addPathSearch: function() {
+        if (this._path) {
+          this.set('params.path', [this._path]);
+        }
+      },
+
+      _checkForEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.fire('trigger-search');
+        }
+      }
+
+    });
+  </script>
+</dom-module>
