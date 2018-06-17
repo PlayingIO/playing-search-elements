@@ -51,6 +51,12 @@
           </template>
         </mostly-data-table-column>
 
+        <mostly-data-table-column name="[[i18n('documentContentView.datatable.header.type')]]" field="type" hidden>
+          <template>
+            <mostly-tag>[[item.type]]</mostly-tag>
+          </template>
+        </mostly-data-table-column>
+
         <mostly-data-table-column name="[[i18n('label.dublincore.updatedAt')]]" field="updatedAt" sort-by="updatedAt" flex="50">
           <template>
             <mostly-date datetime="[[item.updatedAt]]"></mostly-date>
