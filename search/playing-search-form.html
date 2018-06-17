@@ -353,6 +353,7 @@
           notify: true,
           observer: '_selectedSearchChanged'
         },
+
         /**
          * The selected saved search index.
          **/
@@ -361,12 +362,14 @@
           value: 0,
           observer: '_selectedSearchIdxChanged'
         },
+
         /**
          * The `mostly-page-provider` instance used to perform the search.
          **/
         provider: {
           type: String
         },
+
         /**
          * The page size passed on to `provider`.
          **/
@@ -374,18 +377,21 @@
           type: Number,
           value: 40
         },
+
         /**
          * The parameters passed on to `provider`.
          **/
         params: {
           type: Object
         },
+
         /**
          * The schemas passed on to `provider`.
          **/
         schemas: {
           type: String
         },
+
         /**
          * Gets or sets the mode, `true` if in queue mode, `false` otherwise.
          **/
@@ -393,6 +399,7 @@
           type: Boolean,
           value: false
         },
+
         /**
          * The selected document if in queue mode.
          **/
@@ -401,6 +408,7 @@
           observer: '_selectedDocChanged',
           notify: true
         },
+
         /**
          * If `true`, the parameters for the currently selected search changed.
          **/
@@ -409,6 +417,7 @@
           value: false,
           notify: true
         },
+
         /**
          * If `true`, a previously saved search is selected.
          **/
@@ -417,6 +426,7 @@
           value: false,
           notify: true
         },
+
         /**
          * If `true`, only the queue title will be displayed in the header, without the actions dropdown.
          **/
@@ -424,6 +434,7 @@
           type: Boolean,
           value: false
         },
+
         /**
          * Method used to build `params` from a loaded saved search.
          **/
@@ -445,6 +456,7 @@
             };
           }
         },
+
         /**
          * If `true`, requests from `provider` are in flight.
          **/
@@ -453,20 +465,24 @@
           reflectToAttribute: true,
           value: false
         },
+
         /**
          * The name of the search layout.
          **/
         searchName: String,
+
         /**
          * The aggregations returned by `provider`.
          **/
         aggregations: {
           type: Object
         },
+
         /**
          * If `true`, the current element is visible.
          **/
         visible: Boolean,
+
         /**
          * If `true`, automatically execute the search each time a param is changed.
          */
@@ -474,6 +490,7 @@
           type: Boolean,
           value: false
         },
+
         /**
          * If `true`, display a toggle control to enable or disable auto mode.
          */
@@ -481,6 +498,7 @@
           type: Boolean,
           value: false
         },
+
         /**
          * Currently selected view in search results
          */
@@ -517,7 +535,9 @@
         body.appendChild(this.$.deleteDialog);
 
         document.addEventListener('search-results-view', (e) => {
-          this.view = e.detail.view;
+          if (this.searchName === e.detail.name) {
+            this.view = e.detail.view;
+          }
         });
       },
 
@@ -527,6 +547,18 @@
 
       get form() {
         return this.$.layout.element;
+      },
+
+      refresh: function() {
+        if (this.visible) {
+          if (this.queue) {
+            this.$.list.fetch();
+          }
+          if (this.view) {
+            this.view.reset();
+            this.view.fetch();
+          }
+        }
       },
 
       displayQueueAndNavigateToFirst: function() {

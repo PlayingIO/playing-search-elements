@@ -135,6 +135,7 @@
         provider: {
           type: String
         },
+
         /**
          * The page size passed on to `provider`.
          **/
@@ -142,6 +143,7 @@
           type: Number,
           value: 40
         },
+
         /**
          * The parameters passed on to `provider`.
          **/
@@ -150,12 +152,14 @@
           observer: '_paramsChanged',
           value: {}
         },
+
         /**
          * The schemas passed on to `provider`.
          **/
         schemas: {
           type: String
         },
+
         /**
          * List of content enrichers passed on to `provider`.
          * Already set by default are thumbnail, permissions and highlight.
@@ -164,6 +168,7 @@
           type: String,
           value: 'thumbnail, permissions, highlight'
         },
+
         /**
          * The headers passed on to `provider`.
          * Already set by default are 'X-NXfetch.document': 'properties' and 'X-NXtranslate.directoryEntry': 'label'.
@@ -172,6 +177,7 @@
           type: String,
           value: {'X-NXfetch.document': 'properties', 'X-NXtranslate.directoryEntry': 'label'}
         },
+
         /**
          * If `true`, requests from `provider` are in flight.
          **/
@@ -180,10 +186,12 @@
           reflectToAttribute: true,
           value: false
         },
+
         /**
          * The name of the search layout.
          **/
         searchName: String,
+
         /**
          * The aggregations returned by `provider`.
          **/
@@ -192,6 +200,7 @@
           observer: '_aggregationsChanged',
           notify: true
         },
+
         /**
          * Quick filters state of `provider`.
          */
@@ -199,6 +208,7 @@
           type: Array,
           notify: true
         },
+
         /**
          * If `true`, the current element is visible.
          **/
@@ -206,6 +216,7 @@
           type: Boolean,
           value: false
         },
+
         /**
          * If `true`, automatically execute the search each time a param is changed.
          */
@@ -213,6 +224,7 @@
           type: Boolean,
           value: false
         },
+
         /**
          * If `true`, display the top filtering panel.
          */
@@ -220,6 +232,7 @@
           type: Boolean,
           value: false
         },
+
         /*
          * If `true`, opens the collapsible top filtering panel.
          */
@@ -227,6 +240,7 @@
           type: Boolean,
           value: false
         },
+
         /*
          * An external search form (containing its own page provider) will be used, instead of the embeded one.
          * In case this is set, the following properties should be ignored, as the behavior they affect will be
@@ -245,8 +259,11 @@
         view: Object,
 
         _params: Object,
+
         _paramsCount: Number,
+
         _nxProvider: HTMLElement,
+
         _hideCounter: {
           type: String,
           computed: '_computeHideCounter(opened, _params.*)',
@@ -258,9 +275,11 @@
         if (!this._nxProvider) {
           this._nxProvider = this.$.provider;
         }
-        document.addEventListener('search-results-view', function(e) {
-          this.view = e.detail.view;
-        }.bind(this));
+        document.addEventListener('search-results-view', (e) => {
+          if (this.searchName === e.detail.name) {
+            this.view = e.detail.view;
+          }
+        });
       },
 
       get form() {
