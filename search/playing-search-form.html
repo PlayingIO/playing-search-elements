@@ -294,7 +294,7 @@
       </div>
     </div>
 
-    <mostly-dialog id="saveDialog" with-backdrop>
+    <mostly-dialog id="saveDialog" with-backdrop reparent>
       <h2>[[i18n('searchForm.savePopup.heading')]]</h2>
       <paper-input id="savedSearchTitle"
               label="[[i18n('searchForm.savePopup.label')]]"
@@ -307,7 +307,7 @@
       </div>
     </mostly-dialog>
 
-    <mostly-dialog id="renameDialog" with-backdrop>
+    <mostly-dialog id="renameDialog" with-backdrop reparent>
       <h2>[[i18n('searchForm.renamePopup.heading')]]</h2>
       <paper-input id="savedSearchRenameTitle"
               label="[[i18n('searchForm.renamePopup.label')]]"
@@ -320,7 +320,7 @@
       </div>
     </mostly-dialog>
 
-    <mostly-dialog id="shareDialog" with-backdrop>
+    <mostly-dialog id="shareDialog" with-backdrop reparent>
       <h2>[[i18n('searchForm.shared.heading')]]</h2>
       <playing-document-permissions doc-id="[[selectedSearch.id]]"></playing-document-permissions>
       <div class="buttons">
@@ -328,7 +328,7 @@
       </div>
     </mostly-dialog>
 
-    <mostly-dialog id="deleteDialog" with-backdrop>
+    <mostly-dialog id="deleteDialog" with-backdrop reparent>
       <h2>[[i18n('searchForm.delete.heading')]]</h2>
       <div class="buttons">
         <paper-button dialog-dismiss>[[i18n('label.no')]]</paper-button>
@@ -528,12 +528,6 @@
       },
 
       ready: function() {
-        var body = document.querySelector('body');
-        body.appendChild(this.$.saveDialog);
-        body.appendChild(this.$.renameDialog);
-        body.appendChild(this.$.shareDialog);
-        body.appendChild(this.$.deleteDialog);
-
         document.addEventListener('search-results-view', (e) => {
           if (this.searchName === e.detail.name) {
             this.view = e.detail.view;
