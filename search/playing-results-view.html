@@ -154,13 +154,6 @@
         },
 
         /**
-         * The schemas passed on to `provider`.
-         **/
-        schemas: {
-          type: String
-        },
-
-        /**
          * List of content enrichers passed on to `provider`.
          * Already set by default are thumbnail, permissions and highlight.
          */
@@ -176,6 +169,13 @@
         headers: {
           type: String,
           value: {'X-NXfetch.document': 'properties', 'X-NXtranslate.directoryEntry': 'label'}
+        },
+
+        /**
+         * The schemas passed on to `provider`.
+         **/
+        schemas: {
+          type: String
         },
 
         /**

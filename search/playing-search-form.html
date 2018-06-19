@@ -202,11 +202,12 @@
             provider="[[provider]]"
             page-size="[[pageSize]]"
             aggregations="{{aggregations}}"
-            enrichers="thumbnail, permissions, highlight"
+            enrichers="[[enrichers]]"
             params="[[params]]"
             quick-filters="{{quickFilters}}"
             schemas="[[schemas]]"
             loading="{{loading}}"
+            headers="[[headers]]"
             fetch-aggregates="coverage, createdAt, updatedAt, nature, size, subjects"
             on-error="_onError">
     </mostly-page-provider>
@@ -383,6 +384,23 @@
          **/
         params: {
           type: Object
+        },
+
+        /**
+         * List of content enrichers passed on to `provider`.
+         * Already set by default are thumbnail, permissions and highlight.
+         */
+        enrichers: {
+          type: String,
+          value: 'thumbnail, permissions, highlight'
+        },
+
+        /**
+         * The headers passed on to `provider`.
+         */
+        headers: {
+          type: String,
+          value: {}
         },
 
         /**
