@@ -65,14 +65,19 @@
   <script>
     Polymer({
       is: 'playing-saved-search-actions',
+
       behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior],
+
       properties: {
         searchId: String,
+
         searchDoc: Object,
+
         searchForm: {
           type: Object,
           observer: '_searchFormChanged'
         },
+
         _dirty: Boolean
       },
 
@@ -83,8 +88,10 @@
             this._dirty = this.searchForm.dirty;
           });
           this.searchForm.addEventListener('selected-search-changed', () => {
-            this.searchId = this.searchForm.selectedSearch.id;
-            this.isSavedSearch = !!this.searchId;
+            if (this.searchForm.selectedSearch) {
+              this.searchId = this.searchForm.selectedSearch.id;
+              this.isSavedSearch = !!this.searchId;
+            }
           });
 
           if (this.searchForm.selectedSearch) {
