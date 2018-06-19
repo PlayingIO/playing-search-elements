@@ -41,13 +41,8 @@
       properties: {
         params: {
           type: Object,
-          value: function() {
-            var oneWeekAgo = new Date();
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-            return {
-              "expiredMax" : oneWeekAgo.toJSON()
-            }
-          },
+          value: {},
+          observer: '_paramsChanged',
           notify: true
         },
 
@@ -66,6 +61,13 @@
       clear: function() {
         this.searchTerm = '';
         this._search();
+      },
+
+      _paramsChanged: function() {
+        var currentDate = new Date();
+        if (!this.params.expiredMax) {
+          this.set('params.expiredMax', currentDate.toJSON());
+        }
       },
 
       _search: function() {
