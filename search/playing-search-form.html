@@ -546,7 +546,7 @@
       },
 
       ready: function() {
-        document.addEventListener('search-results-view', (e) => {
+        document.addEventListener('search-results-view', e => {
           if (this.searchName === e.detail.name) {
             this.view = e.detail.view;
           }
@@ -691,7 +691,7 @@
       _reset: function() {
         var _el = this.$['savedSearch'];
         _el.searchId = this.selectedSearch.id;
-        _el.get().then((response) => {
+        _el.get().then(response => {
           this.params = this._mutateParams(response.params);
           this.searchTerm = this.params.searchTerm || '';
           this.form.searchTerm = this.searchTerm;
@@ -742,7 +742,7 @@
             'params': this.params,
             'title': this.$.savedSearchTitle.value
           };
-          _el.post().then((response) => {
+          _el.post().then(response => {
             this.$.saveDialog.close();
             this.selectedSearch = response;
             this.$['savedSearches'].get().then(() => {
@@ -808,7 +808,7 @@
         }
 
         // setup data binding
-        this.form.addEventListener('params-changed', (e) => {
+        this.form.addEventListener('params-changed', e => {
           // e.detail.path is params.prop_name eg: params.ecm_fulltext
           if (e.detail.path) {
             var param = e.detail.path.split('.')[1];

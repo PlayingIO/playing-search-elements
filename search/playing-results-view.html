@@ -275,7 +275,7 @@
         if (!this._nxProvider) {
           this._nxProvider = this.$.provider;
         }
-        document.addEventListener('search-results-view', (e) => {
+        document.addEventListener('search-results-view', e => {
           if (this.searchName === e.detail.name) {
             this.view = e.detail.view;
           }
@@ -366,13 +366,13 @@
         this._clear();
         var form = e.detail.value;
         // setup data binding
-        form.addEventListener('params-changed', function(e) {
+        form.addEventListener('params-changed', e => {
           // e.detail.path is params.prop_name eg: params.ecm_fulltext
           if (e.detail.path) {
             var param = e.detail.path.split('.')[1];
             this.set('_params.' + param, e.detail.value);
           }
-        }.bind(this));
+        });
         form.addEventListener('trigger-search', this._search.bind(this));
         this._search();
       },

@@ -152,7 +152,7 @@ element.
        */
       get: function() {
         this.method = 'get';
-        return this.$.resource.execute().then((response) => {
+        return this.$.resource.execute().then(response => {
           if (this.searchId) {
             this.search = response;
           } else {
@@ -201,7 +201,7 @@ element.
         if (this.searchId) {
           this.method = 'get';
           this.$.resource.path += '/execute';
-          this.$.resource.execute().then((response) => {
+          this.$.resource.execute().then(response => {
             this.results = response.data;
           });
         }
