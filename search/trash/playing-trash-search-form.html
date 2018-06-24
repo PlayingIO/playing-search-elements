@@ -16,13 +16,13 @@
     </style>
 
     <mostly-input role="widget"
-                 id="searchInput"
-                 type="search"
-                 label="[[i18n('defaultSearch.fullText')]]"
-                 value="{{searchTerm}}"
-                 placeholder="[[i18n('defaultSearch.fullText.placeholder')]]"
-                 autofocus
-                 on-keydown="_checkForEnter">
+            id="searchInput"
+            type="search"
+            label="[[i18n('defaultSearch.fullText')]]"
+            value="{{searchTerm}}"
+            placeholder="[[i18n('defaultSearch.fullText.placeholder')]]"
+            autofocus
+            on-keydown="_checkForEnter">
     </mostly-input>
 
     <playing-path-suggestion value="{{_path}}" label="[[i18n('defaultSearch.path')]]" role="widget"></playing-path-suggestion>
@@ -30,19 +30,19 @@
     <div role="widget">
       <label>[[i18n('defaultSearch.authors')]]</label>
       <mostly-dropdown-aggregation placeholder="[[i18n('defaultSearch.authors.placeholder')]]"
-        data="[[aggregations.dc_creator_agg]]"
-        value="{{params.dc_creator_agg}}"
-        multiple="true"
-        name="authors">
+              data="[[aggregations.dc_creator_agg]]"
+              value="{{params.dc_creator_agg}}"
+              multiple="true"
+              name="authors">
       </mostly-dropdown-aggregation>
     </div>
 
     <div role="widget">
       <label>[[i18n('defaultSearch.size')]]</label>
       <mostly-checkbox-aggregation
-        data="[[aggregations.common_size_agg]]"
-        value="{{params.common_size_agg}}"
-        name="size">
+              data="[[aggregations.common_size_agg]]"
+              value="{{params.common_size_agg}}"
+              name="size">
       </mostly-checkbox-aggregation>
     </div>
   </template>
@@ -98,7 +98,7 @@
 
       _addPathSearch: function() {
         if (this._path) {
-          this.set('params.path', [this._path]);
+          this.set('params.path', this._path);
         }
       },
 
