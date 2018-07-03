@@ -302,13 +302,13 @@
       },
 
       _expandIcon: function(opened) {
-        return 'hardware:keyboard-arrow-' + (opened ? 'down' : 'right');
+        return 'hardware:keyboard-arrow-' + (opened? 'down' : 'right');
       },
 
       _getFilterCount: function() {
         if (this._params) {
           // subtract the number of original parameters (this._paramsCount)
-          return Object.keys(this._params).length - this._paramsCount - ('highlight' in this._params ? 1 : 0);
+          return Object.keys(this._params).length - this._paramsCount - ('highlight' in this._params? 1 : 0);
         } else {
           return 0;
         }
@@ -316,13 +316,13 @@
 
       _computeHideCounter: function(opened) {
         var count = this._getFilterCount();
-        return opened || count === 0 ? 'hidden' : '';
+        return opened || count === 0? 'hidden' : '';
       },
 
       _paramsChanged: function() {
         if (this.params) {
           // if the supplied params are a string, parse them; otherwise clone the object
-          this._params = JSON.parse(typeof this.params === 'string' ? this.params : JSON.stringify(this.params));
+          this._params = JSON.parse(typeof this.params === 'string'? this.params : JSON.stringify(this.params));
           // cache the number of this.params to avoid having to parse json again if this.params is a string
           this._paramsCount = Object.keys(this._params).length;
         } else {

@@ -466,7 +466,7 @@
                 for (var param in params) {
                   var value = params[param];
                   if (value && param !== 'title') {
-                    result[param.startsWith('defaults:') ? param.replace('defaults:', '') : param] = value;
+                    result[param.startsWith('defaults:')? param.replace('defaults:', '') : param] = value;
                   }
                 }
               }
@@ -791,7 +791,7 @@
       },
 
       _mutateParams: function(params) {
-        return this.paramMutator ? this.paramMutator(params) : params;
+        return this.paramMutator? this.paramMutator(params) : params;
       },
 
       _computeSavedSearchesParams: function() {
